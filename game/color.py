@@ -11,3 +11,19 @@ class Color:
     BLUE = '\033[34m'
     ORANGE = '\033[38;5;208m'
     BACKGROUND_RED = '\033[41m'
+    
+    # Symbols for board representation
+    EMPTY_SYMBOL =  '□'
+    FILLED_SYMBOL = '■'
+    CIRCLE_SYMBOL = 'O'
+    CROSS_SYMBOL = '✖'
+    ARROW_UP = '↑'
+    ARROW_DOWN = '↓'
+    ARROW_LEFT = '←'
+    ARROW_RIGHT = '→'
+    ARROW_UP_DOWN = '↕'
+    ARROW_LEFT_RIGHT = '↔'
+    ARROW_UP_RIGHT = '↗'
+
+
+
