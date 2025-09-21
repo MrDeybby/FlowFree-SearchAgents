@@ -1,6 +1,6 @@
 # FlowFree-SearchAgents  
 
-Proyecto académico de la asignatura *Introducción a la Inteligencia Artificial*.  
+Proyecto académico de la asignatura *Juegos Inteligentes.  
 El objetivo es implementar el juego **Flow Free** en Python (versión 3.11.9) y desarrollar agentes de búsqueda que resuelvan automáticamente los tableros utilizando algoritmos clásicos de IA.  
 
 ---
