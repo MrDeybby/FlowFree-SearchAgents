@@ -55,7 +55,7 @@ Posteriormente, se dará formato unificado a la documentación final.
 
 ---
 
-## 📝 Convenciones de commits  
+## Convenciones de commits  
 
 Para mantener un historial claro y consistente, se utilizarán los siguientes prefijos en los mensajes de commit:  
 
@@ -73,6 +73,6 @@ Para mantener un historial claro y consistente, se utilizarán los siguientes pr
 
 ---
 
-## 📜 Licencia  
+## Licencia  
 
 Este proyecto se distribuye bajo la licencia **MIT**.  
