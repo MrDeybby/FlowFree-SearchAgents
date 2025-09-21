@@ -22,6 +22,5 @@ if __name__ == '__main__':
         print('Salir')
    else:
         print('Continuar')
-    
-    
-    
+
+ 
