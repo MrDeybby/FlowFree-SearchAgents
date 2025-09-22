@@ -5,4 +5,9 @@ class Board:
         self.columns = columns
         self.grid = [[' ' for _ in range(columns)] for _ in range(rows)]
         self.length = rows * columns
-        
+    
+    
+    def _validate_cell(self, x, y) -> bool:
+        if not (0 <= x < self.board.columns) or (not 0 <= y < self.board.rows):
+            return False
+        return True
