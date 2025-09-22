@@ -76,18 +76,18 @@ class FlowFreeBoard(Board):
         self.filled_cells = 0
         self.board = load(path, as_list=True)
         rows = len(self.board)
-        cols = len(self.board[0]) if rows > 0 else 0
-        super().__init__(rows, cols)
+        columns = len(self.board[0]) if rows > 0 else 0
+        super().__init__(rows, columns)
         self._complete_board()         
-        self.length = sum(1 for r in range(rows) for c in range(cols) if self.grid[r][c] is not None)
-        self.boolean_grid = [[False if self.grid != None else None for c in range(cols)] for r in range(rows)]
+        self.length = sum(1 for r in range(rows) for c in range(columns) if self.grid[r][c] is not None)
+        self.boolean_grid = [[False if self.grid != None else None for c in range(columns)] for r in range(rows)]
         
     def _complete_board(self) -> None:
         """
         Marca una conexión como completa y actualiza el tablero.
         """
         for r in range(self.rows):
-            for c in range(self.cols):
+            for c in range(self.columns):
                 cell = self.board[r][c]
                 if cell == '.':
                     cell = '.' # Celda vacía
@@ -114,14 +114,15 @@ class FlowFreeBoard(Board):
 if __name__ == '__main__':
     board = FlowFreeBoard("levels/5_x_5_4C_1.txt")
     # print([[cell.color if isinstance(cell, Connection) else cell for cell in row] for row in board.grid])
-    
+    print(f"{'-'* (board.columns * 4)}-")
     for row in board.grid:
         for cell in row:
             if isinstance(cell, Connection):
-                print(f"{cell.color}o{Color.RESET}", end='')
+                print(f"| {cell.color}O{Color.RESET} ", end='')
             else:
                 if cell is None:
-                    print(Color.FILLED_SYMBOL, end='')
+                    print("| X ", end='')
                 else:
-                    print(Color.EMPTY_SYMBOL, end='')
-        print()
+                    print("|   ", end='')
+        print("|")
+        print(f"{'-'* (board.columns* 4)}-")
