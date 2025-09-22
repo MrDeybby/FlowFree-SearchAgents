@@ -3,7 +3,7 @@ import time
 class Control:
     
     @staticmethod
-    def select(selections:dict):
+    def select(selections:dict) -> any:
         if not selections:
             raise ValueError("El diccionario 'selections' no puede estar vacío")
         
