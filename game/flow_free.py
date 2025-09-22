@@ -2,15 +2,23 @@ from menu import Menu
 from color import Color
 from board import Board
 from cargar_txt import load
+from control import Control
+from player import Player
 
 class FlowFree:
     
-    @staticmethod
+    BOARD_CONTROL = {'W':(0,-1), 'A':(-1,0), 'S':(0,1), 'D':(1,0)}
     
-    def play():
-        pass
+    def __init__(self, board:Board) -> None:
+        self.board = board
     
-
+    def play(self, player:Player) -> None:
+        
+        while True:
+            move = player.play(self.board)
+            
+            
+    
 class Connection:
     """
     Representa una conexión entre dos puntos en el tablero de Flow Free.
@@ -109,20 +117,34 @@ class FlowFreeBoard(Board):
                         cell = Connection(cell, (r,c), None) # El segundo punto se asignará al encontrar el otro punto en el archivo
                         self.connections.append(cell)
                 self.grid[r][c] = cell
-              
+    
+    def _validate_cell(self, x, y) -> bool:
+        if not super()._validate_cell(x, y):
+            return False
+        if self.board.grid[y][x] is None:
+            return False # Pared
+        if isinstance(self.board.grid[y][x], Connection):
+            return False # Punto de conexión
+        return True
+    
+    def show(self) -> None:
+        """
+        Muestra el tablero en la consola.
+        """
+        print(f"{'-'* (self.columns * 4)}-")
+        for row in self.grid:
+            for cell in row:
+                if isinstance(cell, Connection):
+                    print(f"| {cell.color}O{Color.RESET} ", end='')
+                else:
+                    if cell is None:
+                        print("| X ", end='')
+                    else:
+                        print("|   ", end='')
+            print("|")
+            print(f"{'-'* (self.columns* 4)}-")       
+               
 # --- IGNORE ---
 if __name__ == '__main__':
     board = FlowFreeBoard("levels/5_x_5_4C_1.txt")
-    # print([[cell.color if isinstance(cell, Connection) else cell for cell in row] for row in board.grid])
-    print(f"{'-'* (board.columns * 4)}-")
-    for row in board.grid:
-        for cell in row:
-            if isinstance(cell, Connection):
-                print(f"| {cell.color}O{Color.RESET} ", end='')
-            else:
-                if cell is None:
-                    print("| X ", end='')
-                else:
-                    print("|   ", end='')
-        print("|")
-        print(f"{'-'* (board.columns* 4)}-")
+    board.show()
