@@ -7,10 +7,10 @@ class Control:
         if not selections:
             raise ValueError("El diccionario 'selections' no puede estar vacío")
         
-        buttons = [k.lower() for k in selections.keys()] # When we push a key the program read it as a upper key
+        buttons = [k.upper() for k in selections.keys()] # When we push a key the program read it as a upper key
         
         while True:
-            key = keyboard.read_key(suppress=True).lower()
+            key = keyboard.read_key(suppress=True).upper()
             time.sleep(0.2)
             
             if key in buttons:
