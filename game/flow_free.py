@@ -4,20 +4,6 @@ from board import Board
 from cargar_txt import load
 from control import Control
 # from player import Player
-
-class FlowFree:
-    
-    BOARD_CONTROL = {'W':(0,-1), 'A':(-1,0), 'S':(0,1), 'D':(1,0)}
-    
-    def __init__(self, board:Board) -> None:
-        self.board = board
-    
-    def play(self, player) -> None:
-        
-        while True:
-            move = player.play(self.board)
-            
-            
     
 class Connection:
     """
@@ -121,29 +107,94 @@ class FlowFreeBoard(Board):
     def _validate_cell(self, x, y) -> bool:
         if not super()._validate_cell(x, y):
             return False
-        if self.board.grid[y][x] is None:
+        if self.grid[y][x] is None:
             return False # Pared
-        if isinstance(self.board.grid[y][x], Connection):
+        if isinstance(self.grid[y][x], Connection):
             return False # Punto de conexión
         return True
     
-    def show(self) -> None:
+    def _get_selectable_cells(self) -> list[tuple[int, int]]:
+        cells = []
+        for r in range(self.rows):
+            for c in range(self.columns):
+                if isinstance(self.grid[r][c], Connection):
+                    cells.append((c, r))
+        return cells  
+    
+    def show(self, highlight_cell = tuple[int, int]) -> None:
         """
         Muestra el tablero en la consola.
         """
-        print(f"{'-'* (self.columns * 4)}-")
-        for row in self.grid:
-            for cell in row:
-                if isinstance(cell, Connection):
-                    print(f"| {cell.color}O{Color.RESET} ", end='')
-                else:
-                    if cell is None:
+        for y in range(self.rows):
+                for x in range(self.columns):
+                    
+                    # Highlight current cell
+                    if (x, y) == highlight_cell and isinstance(self.grid[y][x], Connection):
+                        print(f"| {Color.BOLD}{self.grid[y][x].color}0{Color.RESET} ", end='')
+                         
+                    elif (x, y) == highlight_cell:
+                        print(f"| {Color.BOLD}X{Color.RESET} ", end='') 
+                        
+                    # elif (x, y) == highlight_cell:
+                    #     print(f"| {Color.BOLD}{self.grid[y][x].color}X{Color.RESET} ", end='') 
+                            
+                    elif isinstance(self.grid[y][x], Connection):
+                        print(f"| {self.grid[y][x].color}O{Color.RESET} ", end='')
+                        
+                    elif self.grid[y][x] is None:
                         print("| X ", end='')
-                    else:
+                    elif self.grid[y][x] == '.':
                         print("|   ", end='')
-            print("|")
-            print(f"{'-'* (self.columns* 4)}-")       
-               
+                        
+                    # elif (x, y) in [point for conn in self.connections for point in conn.road]:
+                    #     # Celda llena que es parte de una conexión
+                    #     for conn in self.connections:
+                    #         if (x, y) in conn.road:
+                    #             print(f"| {conn.color}*{Color.RESET} ", end='')
+                    #             break
+                    
+                    elif self.grid[y][x] == 'X':
+                        print("| x ", end='')
+                print("|")
+                print(f"{'-'* (self.columns* 4)}-")        
+
+class FlowFree:
+    
+    board = FlowFreeBoard("levels/5_x_5_4C_1.txt")
+    
+    def __init__(self, board:Board) -> None:
+        self.board = board
+    
+    def play(self, player) -> None:
+        
+        while True:
+            move = player.play(self.board)
+            
+            if not move:
+                print("Juego terminado.")
+                break
+            x, y = move
+            if not self.board._validate_cell(x, y):
+                continue
+            
+            player.position = move
+            self.board.grid[y][x] = 'X' # Marcar la celda como llena
+            self.board.filled_cells += 1
+    
+    def get_state(self, format: str = "raw") -> any:
+        """
+        Devuelve el estado del tablero en el formato solicitado.
+        - 'raw': lista de listas con valores simples (para algoritmos)
+        - 'visual': representación para humanos (colores, símbolos)
+        """
+        if format == "raw":
+            return [[self._cell_value(cell) for cell in row] for row in self.grid]
+        elif format == "visual":
+            # Podrías devolver una cadena con el tablero renderizado
+            return self._render_board()
+        else:
+            raise ValueError(f"Formato desconocido: {format}")
+        
 # --- IGNORE ---
 if __name__ == '__main__':
     board = FlowFreeBoard("levels/5_x_5_4C_1.txt")
