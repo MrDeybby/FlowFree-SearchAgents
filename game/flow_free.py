@@ -3,7 +3,7 @@ from color import Color
 from board import Board
 from cargar_txt import load
 from control import Control
-from player import Player
+# from player import Player
 
 class FlowFree:
     
@@ -12,7 +12,7 @@ class FlowFree:
     def __init__(self, board:Board) -> None:
         self.board = board
     
-    def play(self, player:Player) -> None:
+    def play(self, player) -> None:
         
         while True:
             move = player.play(self.board)
