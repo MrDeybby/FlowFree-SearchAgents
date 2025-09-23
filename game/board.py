@@ -8,6 +8,6 @@ class Board:
     
     
     def _validate_cell(self, x, y) -> bool:
-        if not (0 <= x < self.board.columns) or (not 0 <= y < self.board.rows):
+        if not (0 <= x < self.columns) or (not 0 <= y < self.rows):
             return False
         return True
