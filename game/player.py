@@ -1,6 +1,6 @@
 from control import Control
 from color import Color
-from flow_free import Connection, FlowFreeBoard
+from flow_free import FlowFreeBoard, FlowFree
 
 class Player:
     
@@ -10,69 +10,71 @@ class Player:
 
 class HumanPlayer(Player):
     
-    BOARD_CONTROL = {'W': 'UP', 'A': 'LEFT', 'S': 'DOWN', 'D': 'RIGHT', 'ENTER': 'SELECT', 'ESC': 'QUIT'}
+    BOARD_CONTROL = {'W': (0, -1), 'A': (-1, 0), 'S': (0, 1), 'D': (1, 0), 'ENTER': 'SELECT', 'ESC': 'QUIT'}
     NUMBER_SELECTION_CONTROL = {'A': -1, 'D': 1, 'ENTER': 'SELECT', 'ESC': 'QUIT'}
+    SELECT_CONTROL = {'A': -1, 'D': 1, 'ENTER': 'SELECT', 'ESC': 'QUIT'}
     
-    @classmethod    
-    def play(cls, board:FlowFreeBoard) -> None:
-        board.show() # Display the board
-        move = Control.select(cls.BOARD_CONTROL)
-    
-    @staticmethod
-    def _select_cell(board:FlowFreeBoard) -> None:
-        numbers_cells = HumanPlayer._numbers_cells(board)
-        current_index = 0
-        current_cell = numbers_cells[current_index]
+    def __init__(self):
+        self._current_cell = None
         
+    @property
+    def position(self):
+        return self._current_cell
+    
+    @position.setter
+    def position(self, value):
+        self._current_cell = value
+    
+    def play(self, board:FlowFreeBoard) -> None:
+        if not self._current_cell:
+            current_cell = self._select_cell(board)
+            if current_cell is None:
+                return None
+            x, y = current_cell
+        else:
+            x, y = self._current_cell
+        
+        board.show(highlight_cell=(x, y))
+        move = Control.select(self.BOARD_CONTROL)
+        
+        if move == 'QUIT':
+            return None
+        elif move == 'SELECT':
+            print("HumanPlayer.play: Selected", (x, y))
+            return (x, y)
+        
+        move_x, move_y = move
+        current_cell = x + move_x, y + move_y
+        print("HumanPlayer.play:", current_cell)
+        return (current_cell)
+        
+        
+    @classmethod
+    def _select_cell(cls, board:FlowFreeBoard, current_index = 0) -> any:
+        numbers_cells = board._get_selectable_cells()
+        current_cell = numbers_cells[current_index]
+
         while True:
-            print(f"{'-'* (board.columns * 4)}-")
+            board.show(current_cell) # Display the board
+            move = Control.select(cls.SELECT_CONTROL)
             
-            
-            for y in range(board.rows):
-                for x in range(board.columns):
-                    
-                    # Highlight current cell
-                    if (x, y) == current_cell and isinstance(board.grid[y][x], Connection):
-                        print(f"| {Color.BOLD}{board.grid[y][x].color}0{Color.RESET} ", end='')
-                        
-                    elif (x, y) == current_cell and isinstance(board.grid[y][x], Connection):
-                        print(f"| {Color.BACKGROUND_GRAY}{board.grid[y][x].color}O{Color.RESET} ", end='') 
-                        
-                    elif isinstance(board.grid[y][x], Connection):
-                        print(f"| {board.grid[y][x].color}O{Color.RESET} ", end='')
-                    elif board.grid[y][x] is None:
-                        print("| X ", end='')
-                    elif board.grid[y][x] == '.':
-                        print("|   ", end='')
-                        
-                print("|")
-                print(f"{'-'* (board.columns* 4)}-")  
-                
-            move = Control.select(HumanPlayer.NUMBER_SELECTION_CONTROL)
-            if isinstance(move, int):
-                current_index += move
-                if current_index < 0: current_index = len(numbers_cells) - 1
-                elif current_index == len(numbers_cells): current_index = 0
-                current_cell = numbers_cells[current_index]
-                # continue
-            
-            elif move == 'SELECT':
+            if move == 'SELECT':
                 return current_cell
             elif move == 'QUIT':
-                return None        
-        
-    @staticmethod
-    def _numbers_cells(board:FlowFreeBoard) -> list[tuple[int, int]]:
-        cells = []
-        for r in range(board.rows):
-            for c in range(board.columns):
-                if isinstance(board.grid[r][c], Connection):
-                    cells.append((c, r))
-        return cells
-        
-        
+                return None
+            
+            # Move selection
+            current_index += move
+            if current_index < 0: current_index = len(numbers_cells) - 1
+            elif current_index == len(numbers_cells): current_index = 0
+            current_cell = numbers_cells[current_index]
+                
+                
+            
+            
 if __name__ == "__main__":
     board = FlowFreeBoard("levels/5_x_5_4C_1.txt")
-    HumanPlayer._select_cell(board)
-        
+    game = FlowFree(board)
+    player = HumanPlayer()
+    game.play(player=player)    
         
