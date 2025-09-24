@@ -30,7 +30,8 @@ class HumanPlayer(Player):
             current_cell = self._select_cell(board)
             if current_cell is None:
                 return None
-            x, y = current_cell
+            
+            return current_cell
         else:
             x, y = self._current_cell
         

@@ -11,20 +11,17 @@ class Connection:
     Cada conexión tiene un color y dos puntos (inicio y fin).
     La conexion se completa cuando se traza un camino entre los dos puntos.
     Colores disponibles: Azul, Rojo, Verde, Amarillo, Magenta, Cyan, Naranja.
+    
+    Parámetros:
+    color: str -> 'A', 'R', 'V', 'Y', 'M', 'C', 'N'
+    point_1: tuple -> (row, col)
+    point_2: tuple -> (row, col)
     """
     # A: Azul, R: Rojo, V: Verde, Y: Amarillo, M: Magenta, C: Cyan, N: Naranja
     NAMES = {"A":"blue", "R":"red", "V":"green", "Y":"yellow",  "M":"magenta", "C":"cyan", "N":"orange"}
     COLORS = {"A":Color.BLUE, "R":Color.RED, "V":Color.GREEN, "Y":Color.YELLOW, "M":Color.MAGENTA, "C":Color.CYAN, "N":Color.ORANGE}
     
     def __init__(self, color:str, point_1:tuple, point_2:tuple) -> None:
-        """
-        Representa una conexión entre dos puntos en el tablero de Flow Free.
-        
-        Parámetros:
-        color: str -> 'A', 'R', 'V', 'Y', 'M', 'C', 'N'
-        point_1: tuple -> (row, col)
-        point_2: tuple -> (row, col)
-        """
         self.name = self.NAMES.get(color, None)
         if not self.name:
             raise ValueError(f"Color '{color}' no es válido. Colores válidos: {list(self.NAMES.values())}")
@@ -109,8 +106,8 @@ class FlowFreeBoard(Board):
             return False
         if self.grid[y][x] is None:
             return False # Pared
-        if isinstance(self.grid[y][x], Connection):
-            return False # Punto de conexión
+        # if isinstance(self.grid[y][x], Connection):
+        #     return False # Punto de conexión
         return True
     
     def _get_selectable_cells(self) -> list[tuple[int, int]]:
@@ -125,12 +122,29 @@ class FlowFreeBoard(Board):
         """
         Muestra el tablero en la consola.
         """
+        print([conn.road for conn in self.connections])
+        print(f"{'-'* (self.columns* 4)}-")
         for y in range(self.rows):
                 for x in range(self.columns):
                     
                     # Highlight current cell
                     if (x, y) == highlight_cell and isinstance(self.grid[y][x], Connection):
                         print(f"| {Color.BOLD}{self.grid[y][x].color}0{Color.RESET} ", end='')
+                    
+                    elif isinstance(self.grid[y][x], Connection):
+                        print(f"| {self.grid[y][x].color}O{Color.RESET} ", end='')
+                        
+                    elif (x, y) in [point for conn in self.connections for point in conn.road]:
+                        for conn in self.connections:
+                            if (x, y) in conn.road:
+                                
+                                if (x, y) == highlight_cell:
+                                    print(f"| {Color.BOLD}{conn.color}X{Color.RESET} ", end='')
+                                    
+                                else:
+                                    print(f"| {Color.BOLD}{conn.color}x{Color.RESET} ", end='')
+                                break
+                    
                          
                     elif (x, y) == highlight_cell:
                         print(f"| {Color.BOLD}X{Color.RESET} ", end='') 
@@ -138,8 +152,7 @@ class FlowFreeBoard(Board):
                     # elif (x, y) == highlight_cell:
                     #     print(f"| {Color.BOLD}{self.grid[y][x].color}X{Color.RESET} ", end='') 
                             
-                    elif isinstance(self.grid[y][x], Connection):
-                        print(f"| {self.grid[y][x].color}O{Color.RESET} ", end='')
+                    
                         
                     elif self.grid[y][x] is None:
                         print("| X ", end='')
@@ -164,6 +177,8 @@ class FlowFree:
     
     def __init__(self, board:Board) -> None:
         self.board = board
+        self.last_color_position = None
+        self.last_move = None
     
     def play(self, player) -> None:
         
@@ -173,27 +188,43 @@ class FlowFree:
             if not move:
                 print("Juego terminado.")
                 break
+            
             x, y = move
+            
             if not self.board._validate_cell(x, y):
                 continue
             
+            if not self.last_color_position:
+                self.last_color_position = (x, y)
+                self.board.grid[y][x].add_to_road(move)
+                player.position = move
+                continue
+            
+            if isinstance(self.board.grid[y][x], Connection) and self.board.grid[y][x].name == self.last_color_position:
+                self.board.grid[y][x].add_to_road(move)
+                self.last_color_position = None
+                player.position = None
+                continue
+                    
             player.position = move
+            x_color, y_color = self.last_color_position
+            self.board.grid[y_color][x_color].add_to_road(move)
             self.board.grid[y][x] = 'X' # Marcar la celda como llena
             self.board.filled_cells += 1
     
-    def get_state(self, format: str = "raw") -> any:
-        """
-        Devuelve el estado del tablero en el formato solicitado.
-        - 'raw': lista de listas con valores simples (para algoritmos)
-        - 'visual': representación para humanos (colores, símbolos)
-        """
-        if format == "raw":
-            return [[self._cell_value(cell) for cell in row] for row in self.grid]
-        elif format == "visual":
-            # Podrías devolver una cadena con el tablero renderizado
-            return self._render_board()
-        else:
-            raise ValueError(f"Formato desconocido: {format}")
+    # def get_state(self, format: str = "raw") -> any:
+    #     """
+    #     Devuelve el estado del tablero en el formato solicitado.
+    #     - 'raw': lista de listas con valores simples (para algoritmos)
+    #     - 'visual': representación para humanos (colores, símbolos)
+    #     """
+    #     if format == "raw":
+    #         return [[self._cell_value(cell) for cell in row] for row in self.grid]
+    #     elif format == "visual":
+    #         # Podrías devolver una cadena con el tablero renderizado
+    #         return self._render_board()
+    #     else:
+    #         raise ValueError(f"Formato desconocido: {format}")
         
 # --- IGNORE ---
 if __name__ == '__main__':
