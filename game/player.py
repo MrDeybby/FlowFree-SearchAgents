@@ -27,10 +27,7 @@ class HumanPlayer(Player):
     
     def play(self, board:FlowFreeBoard) -> None:
         if not self._current_cell:
-            current_cell = self._select_cell(board)
-            if current_cell is None:
-                return None
-            
+            current_cell = self._select_cell(board)          
             return current_cell
         else:
             x, y = self._current_cell
@@ -41,12 +38,12 @@ class HumanPlayer(Player):
         if move == 'QUIT':
             return None
         elif move == 'SELECT':
-            print("HumanPlayer.play: Selected", (x, y))
+            # Deselect current cell for choise another whith self._select_cell
+            self._current_cell = None
             return (x, y)
         
         move_x, move_y = move
         current_cell = x + move_x, y + move_y
-        print("HumanPlayer.play:", current_cell)
         return (current_cell)
         
         

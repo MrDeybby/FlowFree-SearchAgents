@@ -137,44 +137,26 @@ class FlowFreeBoard(Board):
                     elif (x, y) in [point for conn in self.connections for point in conn.road]:
                         for conn in self.connections:
                             if (x, y) in conn.road:
-                                
+                                # Celda llena que es parte de una conexión
                                 if (x, y) == highlight_cell:
                                     print(f"| {Color.BOLD}{conn.color}X{Color.RESET} ", end='')
                                     
                                 else:
-                                    print(f"| {Color.BOLD}{conn.color}x{Color.RESET} ", end='')
+                                    print(f"| {conn.color}x{Color.RESET} ", end='')
                                 break
                     
-                         
-                    elif (x, y) == highlight_cell:
-                        print(f"| {Color.BOLD}X{Color.RESET} ", end='') 
-                        
-                    # elif (x, y) == highlight_cell:
-                    #     print(f"| {Color.BOLD}{self.grid[y][x].color}X{Color.RESET} ", end='') 
-                            
-                    
-                        
+ 
                     elif self.grid[y][x] is None:
                         print("| X ", end='')
+                    
                     elif self.grid[y][x] == '.':
                         print("|   ", end='')
-                        
-                    # elif (x, y) in [point for conn in self.connections for point in conn.road]:
-                    #     # Celda llena que es parte de una conexión
-                    #     for conn in self.connections:
-                    #         if (x, y) in conn.road:
-                    #             print(f"| {conn.color}*{Color.RESET} ", end='')
-                    #             break
-                    
-                    elif self.grid[y][x] == 'X':
-                        print("| x ", end='')
+                
                 print("|")
                 print(f"{'-'* (self.columns* 4)}-")        
 
 class FlowFree:
-    
-    board = FlowFreeBoard("levels/5_x_5_4C_1.txt")
-    
+       
     def __init__(self, board:Board) -> None:
         self.board = board
         self.last_color_position = None
@@ -190,8 +172,14 @@ class FlowFree:
                 break
             
             x, y = move
-            
+                  
             if not self.board._validate_cell(x, y):
+                continue
+            
+            
+            if move == self.last_move or move == self.last_color_position:
+                self.last_color_position = None
+                self.last_move = None
                 continue
             
             if not self.last_color_position:
@@ -199,6 +187,8 @@ class FlowFree:
                 self.board.grid[y][x].add_to_road(move)
                 player.position = move
                 continue
+            
+            
             
             if isinstance(self.board.grid[y][x], Connection) and self.board.grid[y][x].name == self.last_color_position:
                 self.board.grid[y][x].add_to_road(move)
@@ -208,6 +198,7 @@ class FlowFree:
                     
             player.position = move
             x_color, y_color = self.last_color_position
+            self.last_move = move
             self.board.grid[y_color][x_color].add_to_road(move)
             self.board.grid[y][x] = 'X' # Marcar la celda como llena
             self.board.filled_cells += 1
