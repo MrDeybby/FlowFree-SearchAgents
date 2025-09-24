@@ -28,7 +28,7 @@ class Connection:
         self.color = self.COLORS.get(color)
         self.points = (point_1, point_2) # Tuplas (row, col)
         self.road = [] # Lista de tuplas (row, col) que representan el camino de la conexión
-        self.completed = False
+        self.is_completed = False
         
     def add_to_road(self, point:tuple) -> None:
         """
@@ -46,9 +46,9 @@ class Connection:
         Verifica si la conexión está completa (si el camino conecta ambos puntos).
         """
         if self.points[0] in self.road and self.points[1] in self.road:
-            self.completed = True
+            self.is_completed = True
         else:
-            self.completed = False
+            self.is_completed = False
             
     def break_road(self, point:tuple) -> None:
         """
@@ -86,18 +86,19 @@ class FlowFreeBoard(Board):
                     cell = None # Pared
                 else:
                     if cell not in Connection.NAMES.keys():
-                        raise ValueError(f"Carácter '{cell}' en la posición ({r},{c}) no es válido. Carácteres válidos: {list(Connection.NAMES.keys())} + '.' + '#'")
+                        raise ValueError(f"Carácter '{cell}' en la posición ({c},{r}) no es válido. Carácteres válidos: {list(Connection.NAMES.keys())} + '.' + '#'")
                     
                     if Connection.NAMES[cell] in [conn.name for conn in self.connections]:
                         # Si ya existe una conexión con ese color, asignar el segundo punto
                         for conn in self.connections:
                             if conn.name == Connection.NAMES[cell] and conn.points[1] is None:
-                                conn.points = (conn.points[0], (r,c))
+                                print(f"Asignando segundo punto {c,r} a la conexión {conn.name}")
+                                conn.points = (conn.points[0], (c,r))
                                 cell = conn
                                 break
                     else:
                         # Crear una nueva conexión con el primer punto
-                        cell = Connection(cell, (r,c), None) # El segundo punto se asignará al encontrar el otro punto en el archivo
+                        cell = Connection(cell, (c,r), None) # El segundo punto se asignará al encontrar el otro punto en el archivo
                         self.connections.append(cell)
                 self.grid[r][c] = cell
     
@@ -132,7 +133,10 @@ class FlowFreeBoard(Board):
                         print(f"| {Color.BOLD}{self.grid[y][x].color}0{Color.RESET} ", end='')
                     
                     elif isinstance(self.grid[y][x], Connection):
-                        print(f"| {self.grid[y][x].color}O{Color.RESET} ", end='')
+                        if self.grid[y][x].is_completed:
+                                print(f"| {Color.BOLD}{self.grid[y][x].color}O{Color.RESET} ", end='')
+                        else:
+                            print(f"| {self.grid[y][x].color}O{Color.RESET} ", end='')
                         
                     elif (x, y) in [point for conn in self.connections for point in conn.road]:
                         for conn in self.connections:
@@ -140,7 +144,8 @@ class FlowFreeBoard(Board):
                                 # Celda llena que es parte de una conexión
                                 if (x, y) == highlight_cell:
                                     print(f"| {Color.BOLD}{conn.color}X{Color.RESET} ", end='')
-                                    
+                                elif conn.is_completed:
+                                    print(f"| {Color.BOLD}{conn.color}x{Color.RESET} ", end='')    
                                 else:
                                     print(f"| {conn.color}x{Color.RESET} ", end='')
                                 break
@@ -149,7 +154,9 @@ class FlowFreeBoard(Board):
                     elif self.grid[y][x] is None:
                         print("| X ", end='')
                     
-                    elif self.grid[y][x] == '.':
+                    # elif self.grid[y][x] == '.':
+                    #     print("|   ", end='')
+                    else:
                         print("|   ", end='')
                 
                 print("|")
@@ -176,13 +183,13 @@ class FlowFree:
             if not self.board._validate_cell(x, y):
                 continue
             
-            
-            if move == self.last_move or move == self.last_color_position:
+            elif move == self.last_move or move == self.last_color_position:
                 self.last_color_position = None
                 self.last_move = None
                 continue
             
-            if not self.last_color_position:
+            elif not self.last_color_position:
+                # s
                 self.last_color_position = (x, y)
                 self.board.grid[y][x].add_to_road(move)
                 player.position = move
@@ -190,17 +197,36 @@ class FlowFree:
             
             
             
-            if isinstance(self.board.grid[y][x], Connection) and self.board.grid[y][x].name == self.last_color_position:
+            elif isinstance(self.board.grid[y][x], Connection):
+                x_color, y_color = self.last_color_position
+                if self.board.grid[y][x].name != self.board.grid[y_color][x_color].name:
+                    continue # Not same color
+                
                 self.board.grid[y][x].add_to_road(move)
+                self.board.grid[y][x].check_completion()
+                print(self.board.grid[y][x].points)
                 self.last_color_position = None
                 player.position = None
                 continue
-                    
+            
+            # elif self.board.boolean_grid[y][x] == True:
+            #     pass
+            
+            elif (x, y) in [point for conn in self.board.connections for point in conn.road]:
+                for conn in self.board.connections:
+                    if (x, y) in conn.road:
+                        # Romper la conexión en ese punto
+                        conn.break_road((x, y))
+                        break
+                # player.position = move
+                # x_color, y_color = self.last_color_position
+                # self.board.grid[y_color][x_color].add_to_road(move)
+                # continue
+                
             player.position = move
             x_color, y_color = self.last_color_position
             self.last_move = move
             self.board.grid[y_color][x_color].add_to_road(move)
-            self.board.grid[y][x] = 'X' # Marcar la celda como llena
             self.board.filled_cells += 1
     
     # def get_state(self, format: str = "raw") -> any:
@@ -219,5 +245,15 @@ class FlowFree:
         
 # --- IGNORE ---
 if __name__ == '__main__':
-    board = FlowFreeBoard("levels/5_x_5_4C_1.txt")
-    board.show()
+    # board = FlowFreeBoard("levels/5_x_5_4C_1.txt")
+    # board.show()
+    
+    conn = Connection('R', (0,0), (4,4))
+    conn.add_to_road((0,0))
+    conn.add_to_road((1,0))
+    conn.add_to_road((2,0))
+    conn.add_to_road((3,0))
+    conn.add_to_road((4,4))
+    conn.check_completion()
+    print(conn.road)
+    print(f"Conexión completa: {conn.is_completed}")
