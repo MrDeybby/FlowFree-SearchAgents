@@ -6,9 +6,9 @@ Esta carpeta contiene los archivos de nivel del juego Flow Free. Cada archivo re
 
 Los archivos de nivel se nombran con el siguiente formato:
 ```
-{ancho}_x_{alto}_{cantidad_colores}C_{número_nivel}.txt
+{ancho}x{alto}_{cantidad_colores}C_{número_nivel}.txt
 ```
-Ejemplo: `5_x_5_4C_1.txt` representa una cuadrícula de 5x5, 4 colores, nivel 1
+Ejemplo: `5x5_4C_1.txt` representa una cuadrícula de 5x5, 4 colores, nivel 1
 
 ## Formato de nivel
 

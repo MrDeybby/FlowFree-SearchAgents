@@ -1,3 +1,4 @@
+import os
 class Color:
     RESET = '\033[0m'
     DIM = '\033[2m'
@@ -12,6 +13,7 @@ class Color:
     ORANGE = '\033[38;5;208m'
     BACKGROUND_RED = '\033[41m'
     BACKGROUND_GRAY = '\033[100m'
+    CLEAR_SCREEN = os.system('cls')
 
 
 
