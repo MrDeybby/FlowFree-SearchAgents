@@ -83,7 +83,7 @@ class FlowFreeBoard(Board):
         columns = len(self.board[0]) if rows > 0 else 0
         super().__init__(rows, columns)
         self._complete_board()         
-        self.length = sum(1 for r in range(rows) for c in range(columns) if self.grid[r][c] is not None) - len(self.connections)
+        self.length = sum(1 for r in range(rows) for c in range(columns) if self.grid[r][c] is not "#") - len(self.connections)
         self.flow_free_moves = 0
 
                     
@@ -114,7 +114,7 @@ class FlowFreeBoard(Board):
     def _validate_cell(self, x, y) -> bool:
         if not super()._validate_cell(x, y):
             return False
-        if self.grid[y][x] is None:
+        if self.grid[y][x] == "#":
             return False # Pared
         return True
     
