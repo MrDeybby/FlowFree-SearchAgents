@@ -4,8 +4,7 @@ from board import Board
 from cargar_txt import load
 from control import Control
 import os
-# from player import Player
-    
+
 class Connection:
     """
     Representa una conexión entre dos puntos en el tablero de Flow Free.
@@ -95,11 +94,7 @@ class FlowFreeBoard(Board):
         for r in range(self.rows):
             for c in range(self.columns):
                 cell = self.board[r][c]
-                if cell == '.':
-                    cell = '.' # Celda vacía
-                elif cell == '#':
-                    cell = None # Pared
-                else:
+                if cell != '.' and cell != '#':
                     if cell not in Connection.NAMES.keys():
                         raise ValueError(f"Carácter '{cell}' en la posición ({c},{r}) no es válido. Carácteres válidos: {list(Connection.NAMES.keys())} + '.' + '#'")
                     
@@ -173,7 +168,7 @@ class FlowFreeBoard(Board):
                                 print(f"| {conn.color}x{Color.RESET} ", end='')
                             break
                 
-                elif self.grid[y][x] is None:
+                elif self.grid[y][x] == "#":
                     print("| # ", end='')
                 
                 else:
@@ -275,7 +270,7 @@ class FlowFree:
         - 'visual': representación para humanos (colores, símbolos)
         """
         if format == "raw":
-            return [[self._cell_value(cell) for cell in row] for row in self.grid]
+            return [[cell.name if isinstance(cell, Connection) else cell for cell in row] for row in self.board.grid]
         elif format == "visual":
             # Podrías devolver una cadena con el tablero renderizado
             return self._render_board()
