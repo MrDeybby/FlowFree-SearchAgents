@@ -25,7 +25,7 @@ class Menu:
                 else:   
                     print(self.menu_sections[i])
             
-            print('Presiona una tecla (US [ENTER])')
+            print('Presiona una tecla [W] [S] [ENTER])')
                 
             selected = self.control(self.CONTROL_SELECTIONS)
             if selected == 'ENTER':

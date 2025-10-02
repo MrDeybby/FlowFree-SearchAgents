@@ -84,9 +84,8 @@ class FlowFreeBoard(Board):
         super().__init__(rows, columns)
         self._complete_board()         
         self.length = sum(1 for r in range(rows) for c in range(columns) if self.grid[r][c] is not "#") - len(self.connections)
-        self.flow_free_moves = 0
-
-                    
+        self.flow_free_moves = 0        
+              
     def _complete_board(self) -> None:
         """
         Marca una conexión como completa y actualiza el tablero.
@@ -181,12 +180,86 @@ class FlowFreeBoard(Board):
         
 class FlowFree:
        
-    def __init__(self, board:Board) -> None:
+    def __init__(self, board:Board=None) -> None:
         self.board = board
         self.last_color_position = None
         self.last_move = None
-        
+        self.load_list_levels()
     
+    def load_list_levels(self) -> None:
+        """
+        Lista los archivos de niveles disponibles en la carpeta 'levels' y los clasifica por dificultad.
+        La dificultad se determina por el tamaño del tablero:
+        - Fácil: tableros de hasta 5x5
+        - Medio: tableros de hasta 9x9
+        - Difícil: tableros más grandes
+        ---------------
+        Ademas de guardar una lista con los nombres de los niveles en el formato:
+        "Nivel {número} - Tablero {tamaño}, {número de colores} colores"
+        Ejemplo: "Nivel 1 - Tablero 5x5, 4 colores"
+        ---------------
+        """
+        
+        levels_files = {"easy": [], "medium": [], "hard": []}
+        levels_files_names = {"easy": [], "medium": [], "hard": []}
+        for file in os.listdir("levels"):
+            if file.endswith(".txt"):
+                
+                if int(file[0]) * int(file[2]) <= 25: level = "easy"
+                elif int(file[0]) * int(file[2]) <= 81: level = "medium"
+                else: level = "hard"
+
+                levels_files[level].append(file)
+                board, colors, level_number = file.replace(".txt", "").replace("_", " ").split()
+                levels_files_names[level].append(f"Nivel {level_number} - Tablero {board}, {colors[:-1]} colores")
+        
+        self.levels_files = levels_files
+        self.levels_files_names = levels_files_names
+     
+    
+    
+        
+    def app(self, player) -> None:
+        while not self.board:
+            options = ["Jugar", "Salir"]
+            menu = Menu(options, "Flow Free")
+            choice = menu.select()
+            if options[choice] == "Salir":
+                print("Saliendo del juego...")
+                return
+            self.select_level()
+            
+            if not self.board:
+                continue
+            self.play(player=player)
+            self.board = None
+            print('Presiona Enter para salir')
+            Control.select({'ENTER':None})
+    
+    def select_level(self) -> None:
+        options =  [level.capitalize() for level, values in self.levels_files.items() if values]
+        options.append("Volver")
+        menu = Menu(options, "Flow Free - Seleccionar nivel")
+        choice = menu.select()
+        if options[choice] == "Volver":
+            return
+        
+        level = options[choice].lower()
+        files = self.levels_files[level]
+        name_files = self.levels_files_names[level]
+        name_files.append("Volver")
+        menu = Menu(name_files, "Flow Free - Seleccionar nivel")
+        
+        choice = menu.select()
+        
+        name_files.pop()
+        if choice == len(files):
+            return
+            
+        file = files[choice]
+        self.board = FlowFreeBoard(os.path.join("levels", file))
+        
+        
     def play(self, player) -> None:
         
         while True:
