@@ -63,6 +63,7 @@ class HumanPlayer(Player):
 
         while True:
             board.show(current_cell) # Display the board
+            print("Selecciona una salida")
             move = Control.select(cls.SELECT_CONTROL)
             
             if move == 'SELECT':

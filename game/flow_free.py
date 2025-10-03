@@ -18,8 +18,8 @@ class Connection:
     point_2: tuple -> (column, row)
     """
     # A: Azul, R: Rojo, V: Verde, Y: Amarillo, M: Magenta, C: Cyan, N: Naranja
-    NAMES = {"A":"blue", "R":"red", "V":"green", "Y":"yellow",  "M":"magenta", "C":"cyan", "N":"orange"}
-    COLORS = {"A":Color.BLUE, "R":Color.RED, "V":Color.GREEN, "Y":Color.YELLOW, "M":Color.MAGENTA, "C":Color.CYAN, "N":Color.ORANGE}
+    NAMES = {"A":"blue", "R":"red", "V":"green", "Y":"yellow",  "M":"magenta", "C":"cyan", "N":"orange", "G":"gray", "L":"lime"}
+    COLORS = {"A":Color.BLUE, "R":Color.RED, "V":Color.GREEN, "Y":Color.YELLOW, "M":Color.MAGENTA, "C":Color.CYAN, "N":Color.ORANGE, "G":Color.GRAY, "L":Color.LIME}
     
     def __init__(self, color:str, point_1:tuple, point_2:tuple) -> None:
         self.name = self.NAMES.get(color, None)

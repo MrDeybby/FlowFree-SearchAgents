@@ -11,6 +11,7 @@ class Color:
     GRAY = '\033[90m'
     BLUE = '\033[34m'
     ORANGE = '\033[38;5;208m'
+    LIME = '\033[92m'
     BACKGROUND_RED = '\033[41m'
     BACKGROUND_GRAY = '\033[100m'
     CLEAR_SCREEN = os.system('cls')
