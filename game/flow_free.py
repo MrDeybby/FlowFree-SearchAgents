@@ -5,23 +5,30 @@ from cargar_txt import load
 from control import Control
 import os
 
+# The `Connection` class represents a connection between two points on a Flow Free board with methods
+# to manage the path and check completion status.
 class Connection:
-    """
-    Representa una conexión entre dos puntos en el tablero de Flow Free.
-    Cada conexión tiene un color y dos puntos (inicio y fin).
-    La conexion se completa cuando se traza un camino entre los dos puntos.
-    Colores disponibles: Azul, Rojo, Verde, Amarillo, Magenta, Cyan, Naranja.
-    
-    Parámetros:
-    color: str -> 'A', 'R', 'V', 'Y', 'M', 'C', 'N'
-    point_1: tuple -> (column, row)
-    point_2: tuple -> (column, row)
-    """
     # A: Azul, R: Rojo, V: Verde, Y: Amarillo, M: Magenta, C: Cyan, N: Naranja
     NAMES = {"A":"blue", "R":"red", "V":"green", "Y":"yellow",  "M":"magenta", "C":"cyan", "N":"orange", "G":"gray", "L":"lime"}
     COLORS = {"A":Color.BLUE, "R":Color.RED, "V":Color.GREEN, "Y":Color.YELLOW, "M":Color.MAGENTA, "C":Color.CYAN, "N":Color.ORANGE, "G":Color.GRAY, "L":Color.LIME}
     
     def __init__(self, color:str, point_1:tuple, point_2:tuple) -> None:
+        """
+        Initializes an object with a specified color, two points, a road list, and a
+        completion status flag.
+        
+        :param color: The `color` parameter in the `__init__` method is a string that represents the color
+        of an object. It is used to initialize the object with a specific color
+        :type color: str
+        :param point_1: The `point_1` parameter in the `__init__` method is a tuple that represents a point
+        on a grid. The tuple should contain two values: the column and row of the point. For example, `(2,
+        3)` could represent a point at column 2 and row 3
+        :type point_1: tuple
+        :param point_2: The `point_2` parameter in the `__init__` method is a tuple that represents a point
+        in a coordinate system. It is used to define the second point of a line segment or connection in the
+        context of the code snippet you provided. The tuple likely contains two values, such as
+        :type point_2: tuple
+        """
         self.name = self.NAMES.get(color, None)
         if not self.name:
             raise ValueError(f"Color '{color}' no es válido. Colores válidos: {list(self.NAMES.keys())}")
@@ -32,18 +39,21 @@ class Connection:
         
     def add_to_road(self, point:tuple) -> None:
         """
-        Agrega un punto al camino de la conexión.
+        Adds a point to a road list and checks for completion.
         
-        Parámetros:
-        point: tuple -> (column, row)
+        :param point: The `add_to_road` method takes a tuple `point` as a parameter. This method adds the
+        `point` to the `road` list if it is not already present in the list. After adding the `point`, it
+        calls the `check_completion` method
+        :type point: tuple
         """
+
         if point not in self.road:
             self.road.append(point)
             self.check_completion()
             
     def check_completion(self) -> None:
         """
-        Verifica si la conexión está completa (si el camino conecta ambos puntos).
+        Check if the connection is complete (if the path connects both colors points).
         """
         if self.points[0] in self.road and self.points[1] in self.road:
             self.is_completed = True
@@ -52,7 +62,7 @@ class Connection:
     
     def pop_road(self) -> None:
         """
-        Elimina el último punto del camino de la conexión.
+        Delete the last point of the path
         """
         if self.road:
             self.road.pop()
@@ -60,7 +70,7 @@ class Connection:
             
     def break_road(self, point:tuple) -> None:
         """
-        Rompe el camino de la conexión, eliminando todos los puntos del camino despues de ese punto.
+        Breaks the path of the connection, removing all points from the path after that point.
         """
         if point in self.road:
             index = self.road.index(point)
@@ -69,20 +79,33 @@ class Connection:
         
     def clean_road(self) -> None:
         """
-        Limpia todo el camino de la conexión.
+        Cleans the entire connection path.
         """
         self.road = []
         self.is_completed = False
-        
+
+# The `FlowFreeBoard` class represents a board for the Flow Free game, allowing players to make
+# connections between points of the same color.
 class FlowFreeBoard(Board):
     
     def __init__(self, path:str) -> None:
+        """
+        Initializes an object with attributes related to a game board and
+        connections.
+        
+        :param path: The `path` parameter is expected to be a string that represents the path
+        to a file. This file is then loaded using the `load` function with the
+        `as_list` parameter set to `True`.
+        :type path: str
+        """
         self.connections = []
         self.board = load(path, as_list=True)
         rows = len(self.board)
         columns = len(self.board[0]) if rows > 0 else 0
         super().__init__(rows, columns)
         self._complete_board()         
+        # The code calculates the grid length by counting the number of elements that are not equal to "#"
+        # and subtracting the length of the netlist. This is used to calculate the missing percentage.
         self.length = sum(1 for r in range(rows) for c in range(columns) if self.grid[r][c] is not "#") - len(self.connections)
         self.flow_free_moves = 0        
               
@@ -132,7 +155,15 @@ class FlowFreeBoard(Board):
         cells_filled = sum(len(conn.road)-1 for conn in self.connections if conn.road)
         return (cells_filled * 100 // self.length)
     
-    def show(self, highlight_cell = tuple[int, int]) -> None:
+    def show(self, highlight_cell:tuple[int, int] = None) -> None:
+        """
+        Displays a game board in the console with the ability to highlight a
+        specific cell.
+        
+        :param highlight_cell: Specify the cell that should be highlighted when displaying the game
+        board in the console. This cell is represented by a tuple of integers `(x, y)` where `x`
+        is the column index and `y` is the row index
+        """
         """
         Muestra el tablero en la consola.
         """
@@ -188,29 +219,44 @@ class FlowFree:
     
     def load_list_levels(self) -> None:
         """
-        Lista los archivos de niveles disponibles en la carpeta 'levels' y los clasifica por dificultad.
-        La dificultad se determina por el tamaño del tablero:
-        - Fácil: tableros de hasta 5x5
-        - Medio: tableros de hasta 9x9
-        - Difícil: tableros más grandes
+        The function `load_list_levels` categorizes level files based on their difficulty and extracts
+        relevant information from the file names.
+        Difficulty is determined by the board size:
+        - Easy: boards up to 5x5
+        - Medium: boards up to 9x9
+        - Hard: larger boards
         ---------------
-        Ademas de guardar una lista con los nombres de los niveles en el formato:
-        "Nivel {número} - Tablero {tamaño}, {número de colores} colores"
-        Ejemplo: "Nivel 1 - Tablero 5x5, 4 colores"
+        
+        In addition to saving a list of level names in the format:
+        
+        - "Nivel {number} - Tablero {size}, {number of colors} colores"
+        
+        Example: "Nivel 1 - Tablero 5x5, 4 colores"
+        
         ---------------
         """
+        
         
         levels_files = {"easy": [], "medium": [], "hard": []}
         levels_files_names = {"easy": [], "medium": [], "hard": []}
         for file in os.listdir("levels"):
             if file.endswith(".txt"):
                 
-                if int(file[0]) * int(file[2]) <= 25: level = "easy"
-                elif int(file[0]) * int(file[2]) <= 81: level = "medium"
+                board, colors, level_number = file.replace(".txt", "").replace("_", " ").split()
+                row, columns = board.split("x")
+                # The code is determining the level of difficulty based on the product of the values
+                # in the variables `row` and `columns`. If the product is less than or equal to 25,
+                # the level is set to "easy". If the product is greater than 25 but less than or equal
+                # to 81, the level is set to "medium". Otherwise, the level is set to "hard".
+                if int(row) * int(columns) <= 25: level = "easy"
+                elif int(row) * int(columns) <= 81: level = "medium"
                 else: level = "hard"
 
+                # The code snippet is appending a file to a list stored in the `levels_files`
+                # dictionary at the key `level`, and appending a formatted string to a list stored in
+                # the `levels_files_names` dictionary at the key `level`. The formatted string
+                # includes the level number, board number, and quantity of colors.
                 levels_files[level].append(file)
-                board, colors, level_number = file.replace(".txt", "").replace("_", " ").split()
                 levels_files_names[level].append(f"Nivel {level_number} - Tablero {board}, {colors[:-1]} colores")
         
         self.levels_files = levels_files
@@ -220,6 +266,13 @@ class FlowFree:
     
         
     def app(self, player) -> None:
+        """
+        Presents a menu to the player to either play a game or exit, then proceeds to
+        select a game level and play the game.
+        
+        :param player: Represent the player who is currently playing the game. Human or algorithm
+        :return: The `app` method is returning `None`.
+        """
         while not self.board:
             options = ["Jugar", "Salir"]
             menu = Menu(options, "Flow Free")
@@ -237,6 +290,14 @@ class FlowFree:
             Control.select({'ENTER':None})
     
     def select_level(self) -> None:
+        """
+        Allows the user to choose a level from levels folder and loads the selected level onto the game board.
+        :return: If the user selects "Volver" in the first menu, the function will return without doing
+        anything else. If the user selects a level and then selects "Volver" in the second menu, the
+        function will also return without doing anything else. If the user selects a specific level and
+        a file in the second menu, the function will set the board attribute of the object to a new
+        FlowFreeBoard.
+        """
         options =  [level.capitalize() for level, values in self.levels_files.items() if values]
         options.append("Volver")
         menu = Menu(options, "Flow Free - Seleccionar nivel")
@@ -278,10 +339,17 @@ class FlowFree:
                 break
             
             x, y = move    
+            
+            # If the cell is not valid, the code will skip to the
+            # next iteration using the `continue` statement, without making any changes to the board.
             if not self.board._validate_cell(x, y):
                 continue
             
+            # if the cell is equal to the last move done by user, the player`s position will marked as None for select a new cell of out
             elif move == self.last_move:
+                # The code snippet is checking if the variable `move` is equal to
+                # `self.last_color_position`. If they are equal, it then calls the `pop_road()` method
+                # on the grid element at position `y_color` and `x_color`, it will delete the current color of the color`s path.
                 if move == self.last_color_position:
                     self.board.grid[y_color][x_color].pop_road()
                 self.last_move = None
@@ -289,68 +357,74 @@ class FlowFree:
                 player.position = None
                 continue
             
+            # If player moves to the circle he has begined, the move is marked as None for delete the X to the path
             elif self.last_color_position and move == self.last_color_position:
                 x_color, y_color = self.last_color_position
                 self.board.grid[y_color][x_color].pop_road()
-                # self.last_color_position = None
                 self.last_move = move
                 player.position = move
                 continue
             
+            # When player selects a new begin position
             elif not self.last_color_position:
+                # If it is a circle point the road will be cleaned and the point will be added to the road.
                 if isinstance(self.board.grid[y][x], Connection):
                     self.last_color_position = (x, y)
                     self.board.grid[y][x].clean_road()
                     self.board.grid[y][x].add_to_road(move)
+                    
+                # If player select a X point for begin, the last_color_position will be the color where point is
                 else:
                     for conn in self.board.connections:
                         if (x, y) in conn.road:
-                            # Romper la conexión en ese punto
-                            self.last_color_position = conn.points[0]
+                            self.last_color_position = conn.road[0]
                             break
                 player.position = move
                 continue
             
+            # If the player has selected a color and try connect to a circle point, first verify if it circle is the
+            # same color, if not, the board will not change
             elif isinstance(self.board.grid[y][x], Connection):
                 x_color, y_color = self.last_color_position
                 if self.board.grid[y][x].name != self.board.grid[y_color][x_color].name:
                     continue # Not same color
                 
+                # If it is the same color, the road is completed, and send to player to select another color/path
                 self.board.grid[y][x].add_to_road(move)
                 self.board.grid[y][x].check_completion()
                 self.last_color_position = None
                 player.position = None
+                # Flow free move increase 1
                 self.board.flow_free_moves += 1
                 continue
 
             
+            # The code snippet is checking if the tuple (x, y) is present in any of the road
+            # connections in the self.board. If it is found in a connection, it breaks the road
+            # connection at that point by calling the `break_road` method on that connection.
             elif (x, y) in [point for conn in self.board.connections for point in conn.road]:
                 for conn in self.board.connections:
                     if (x, y) in conn.road:
-                        # Romper la conexión en ese punto
                         conn.break_road((x, y))
                         break
+            
+            
                 
+            # The code snippet is setting the position of a player to a new move. It then retrieves
+            # the last color position of the player and assigns it to `x_color` and `y_color`
+            # variables. The `last_move` attribute of the player is updated with the new move.
+            # Finally, the `add_to_road` method is called on the last_color_position grid on the board
+            # with the new move as an argument.
             player.position = move
             x_color, y_color = self.last_color_position
             self.last_move = move
             self.board.grid[y_color][x_color].add_to_road(move)
     
-    def get_state(self, format: str = "raw") -> any:
+    def get_state(self,) -> any:
         """
-        Devuelve el estado del tablero en el formato solicitado.
-        - 'raw': lista de listas con valores simples (para algoritmos)
-        - 'visual': representación para humanos (colores, símbolos)
+        Returns the board state in a list of lists with simple values format. 
         """
-        if format == "raw":
-            return [[cell.name if isinstance(cell, Connection) else cell for cell in row] for row in self.board.grid]
-        elif format == "visual":
-            # Podrías devolver una cadena con el tablero renderizado
-            return self._render_board()
-        else:
-            raise ValueError(f"Formato desconocido: {format}")
-    
-    
+        return [[cell.name if isinstance(cell, Connection) else cell for cell in row] for row in self.board.grid]
     
 # --- IGNORE ---
 if __name__ == '__main__':

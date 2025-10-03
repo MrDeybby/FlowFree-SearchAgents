@@ -1,4 +1,5 @@
 import os
+# The class `Color` defines various ANSI escape codes for text, background colors and clean terminal in Python.
 class Color:
     RESET = '\033[0m'
     DIM = '\033[2m'

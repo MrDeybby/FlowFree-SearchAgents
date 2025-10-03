@@ -15,10 +15,12 @@ class Player:
 # ['.', 'green', '.', '.', '.', '.', '.'], 
 # ['.', '.', '.', 'blue', '#', '.', '.']]
 
-# class DFS(Player): 
-
+# The `HumanPlayer` class represents a player in a game who can interact with a board by selecting
+# cells and making moves.
 class HumanPlayer(Player):
     
+    # These dictionaries are defining the control mappings for the HumanPlayer class in the FlowFree
+    # game. Each dictionary maps key inputs to specific actions or movements within the game:
     BOARD_CONTROL = {'W': (0, -1), 'A': (-1, 0), 'S': (0, 1), 'D': (1, 0), 'ENTER': 'SELECT', 'ESC': 'QUIT'}
     NUMBER_SELECTION_CONTROL = {'A': -1, 'D': 1, 'ENTER': 'SELECT', 'ESC': 'QUIT'}
     SELECT_CONTROL = {'A': -1, 'D': 1, 'ENTER': 'SELECT', 'ESC': 'QUIT'}
@@ -55,9 +57,28 @@ class HumanPlayer(Player):
         current_cell = x + move_x, y + move_y
         return (current_cell)
         
-        
     @classmethod
     def _select_cell(cls, board:FlowFreeBoard, current_index = 0) -> any:
+        
+        """
+        This function selects a cell on a FlowFree board based on user input and moves through the
+        selectable cells in a loop.
+        
+        :param cls: In the context of a class method in Python, `cls` refers to the class itself. It is a
+        convention to use `cls` as the first parameter name in class methods to represent the class object.
+        This allows you to access class variables and methods within the method
+        :param board: The `board` parameter in the `_select_cell` method is of type `FlowFreeBoard`. It is
+        used to represent the game board on which the selection of cells is being made. The method operates
+        on this board to select a cell based on the current index provided
+        :type board: FlowFreeBoard
+        :param current_index: The `current_index` parameter in the `_select_cell` method is used to keep
+        track of the current index of the cell being selected from the list of selectable cells on the
+        board. It is initialized with a default value of 0, indicating the starting point of cell selection.
+        The method iterates, defaults to 0 (optional)
+        :return: The method `_select_cell` returns the current cell that the player has selected on the game
+        board. If the player chooses to quit the game, it returns `None`.
+        """
+        
         numbers_cells = board._get_selectable_cells()
         current_cell = numbers_cells[current_index]
 

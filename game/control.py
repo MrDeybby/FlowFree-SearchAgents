@@ -1,9 +1,25 @@
 import keyboard
 import time
+
+# The `Control` class in Python provides a static method `select` that allows for selecting an item
+# based on key inputs from a dictionary of selections.
 class Control:
     
     @staticmethod
     def select(selections:dict) -> any:
+        """
+        This Python function takes a dictionary of selections, waits for a key press that matches one of
+        the keys in the dictionary, and returns the corresponding value.
+        
+        :param selections: The `selections` parameter is a dictionary that contains key-value pairs
+        where the keys represent the options or selections available to the user, and the values
+        represent the corresponding actions or values associated with those options
+        :type selections: dict
+        :return: The `select` function returns the value associated with the key that was pressed from
+        the `selections` dictionary.
+        """
+        # The code snippet `if not selections: raise ValueError("El diccionario 'selections' no puede
+        # estar vacío")` is performing input validation.
         if not selections:
             raise ValueError("El diccionario 'selections' no puede estar vacío")
         
