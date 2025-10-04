@@ -9,8 +9,15 @@ import os
 # to manage the path and check completion status.
 class Connection:
     # A: Azul, R: Rojo, V: Verde, Y: Amarillo, M: Magenta, C: Cyan, N: Naranja
-    NAMES = {"A":"blue", "R":"red", "V":"green", "Y":"yellow",  "M":"magenta", "C":"cyan", "N":"orange", "G":"gray", "L":"lime"}
-    COLORS = {"A":Color.BLUE, "R":Color.RED, "V":Color.GREEN, "Y":Color.YELLOW, "M":Color.MAGENTA, "C":Color.CYAN, "N":Color.ORANGE, "G":Color.GRAY, "L":Color.LIME}
+    NAMES = {"A":"blue", "R":"red", "V":"green", "Y":"yellow",  "M":"magenta", 
+             "C":"cyan", "N":"orange", "G":"gray", "L":"lime", "P":"purple",
+             "D":"dark blue", "O":"ocre", "B":"light blue",
+             "F":"fucsia"}
+    COLORS = {"A":Color.BLUE, "R":Color.RED, "V":Color.GREEN,
+              "Y":Color.YELLOW, "M":Color.MAGENTA, "C":Color.CYAN,
+              "N":Color.ORANGE, "G":Color.GRAY, "L":Color.LIME,
+              "P":Color.PURPLE, "D":Color.DARK_BLUE, "O":Color.OCRE,
+              "B":Color.LIGHT_BLUE, "F":Color.FUCSIA}
     
     def __init__(self, color:str, point_1:tuple, point_2:tuple) -> None:
         """

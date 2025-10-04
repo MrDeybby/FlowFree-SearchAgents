@@ -14,16 +14,23 @@ Ejemplo: `5x5_4C_1.txt` representa una cuadrícula de 5x5, 4 colores, nivel 1
 
 Cada archivo de nivel contiene una representación de cuadrícula donde:
 
-- `.` (punto) = Celda vacía
-- `#` (hashtag) = Celda bloqueada
+- `.` (punto): Celda vacía
+- `#` (hashtag): Celda bloqueada
 - Las letras representan extremos de diferentes colores:
-- `A` = Azul
-- `R` = Rojo
-- `V` = Verde
-- `Y` = Amarillo
-- `M` = Magenta
-- `C` = Cian
-- `N` = Naranja
+- `A`: Azul
+- `R`: Rojo
+- `V`: Verde
+- `Y`: Amarillo
+- `M`: Magenta
+- `C`: Cian
+- `N`: Naranja
+- `G`: Gris
+- `L`: Lima
+- `P`: Purpura
+- `D`: Dark Blue
+- `B`: Light Blue
+- `O`: Ocre
+- `F`: Fucsia
 
 ### Ejemplo
 ```
