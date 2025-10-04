@@ -1,9 +1,9 @@
-from control import Control
-from color import Color
-from flow_free import FlowFreeBoard, FlowFree
-
-class Player:
+from game.control import Control
+from game.flow_free import FlowFreeBoard, FlowFree
+from abc import ABC, abstractmethod
+class Player(ABC):
     
+    @abstractmethod
     def play(self):
         pass
     

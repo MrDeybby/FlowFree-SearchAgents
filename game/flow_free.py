@@ -1,8 +1,8 @@
-from menu import Menu
-from color import Color
-from board import Board
-from cargar_txt import load
-from control import Control
+from game.menu import Menu
+from game.color import Color
+from game.board import Board
+from game.cargar_txt import load
+from game.control import Control
 import os
 
 # The `Connection` class represents a connection between two points on a Flow Free board with methods
