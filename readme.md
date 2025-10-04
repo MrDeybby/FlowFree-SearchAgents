@@ -73,7 +73,7 @@ El sistema incluye un motor de juego, un sistema de niveles y agentes de búsque
 
 | Requisito        | Detalles                          |
 |------------------|-----------------------------------|
-| **Python**       | 3.6 o superior                   |
+| **Python**       | 3.7 o superior                   |
 | **SO**           | Windows, macOS o Linux           |
 | **Terminal**     | Compatible con códigos ANSI      |
 | **Entrada**      | Teclado con soporte de flechas   |
