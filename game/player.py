@@ -1,12 +1,15 @@
 from game.control import Control
-from game.flow_free import FlowFreeBoard, FlowFree
 from abc import ABC, abstractmethod
-class Player(ABC):
-    
-    @abstractmethod
-    def play(self):
-        pass
-    
+import typing
+
+# AÑADE ESTE BLOQUE CONDICIONAL
+# Esto permite que los editores de código y las herramientas de análisis de tipos
+# vean la importación, pero no se ejecuta cuando corres el programa, evitando el error.
+if typing.TYPE_CHECKING:
+    from game.flow_free import FlowFreeBoard, FlowFree
+
+from game.base_player import Player
+
 # [['red', 'green', 'red', 'blue', 'yellow', '.', 'yellow'], 
 # ['.', '.', '.', '.', '.', '.', '.'], 
 # ['.', '.', '.', '.', '.', '.', '.'], 
@@ -36,7 +39,7 @@ class HumanPlayer(Player):
     def position(self, value):
         self._current_cell = value
     
-    def play(self, board:FlowFreeBoard) -> None:
+    def play(self, board: 'FlowFreeBoard') -> None:
         if not self._current_cell:
             current_cell = self._select_cell(board)          
             return current_cell
@@ -58,7 +61,7 @@ class HumanPlayer(Player):
         return (current_cell)
         
     @classmethod
-    def _select_cell(cls, board:FlowFreeBoard, current_index = 0) -> any:
+    def _select_cell(cls, board: 'FlowFreeBoard', current_index = 0) -> any:
         
         """
         This function selects a cell on a FlowFree board based on user input and moves through the
@@ -98,10 +101,9 @@ class HumanPlayer(Player):
             elif current_index == len(numbers_cells): current_index = 0
             current_cell = numbers_cells[current_index]
                 
-                
-            
             
 if __name__ == "__main__":
+    from game.flow_free import FlowFreeBoard, FlowFree
     board = FlowFreeBoard("levels/5x5_4C_1.txt")
     game = FlowFree(board)
     player = HumanPlayer()

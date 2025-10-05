@@ -3,7 +3,8 @@ from game.color import Color
 from game.board import Board
 from game.cargar_txt import load
 from game.control import Control
-import os
+import os, time
+from game.player import HumanPlayer
 
 # The `Connection` class represents a connection between two points on a Flow Free board with methods
 # to manage the path and check completion status.
@@ -185,7 +186,7 @@ class FlowFreeBoard(Board):
                 
                 # Highlight current cell
                 if (x, y) == highlight_cell and isinstance(self.grid[y][x], Connection):
-                    print(f"| {Color.BOLD}{self.grid[y][x].color}0{Color.RESET} ", end='')
+                    print(f"|[{Color.BOLD}{self.grid[y][x].color}0{Color.RESET}]", end='')
                 
                 elif isinstance(self.grid[y][x], Connection):
                     if self.grid[y][x].is_completed:
@@ -198,7 +199,7 @@ class FlowFreeBoard(Board):
                         if (x, y) in conn.road:
                             # Celda llena que es parte de una conexión
                             if (x, y) == highlight_cell:
-                                print(f"| {Color.BOLD}{conn.color}X{Color.RESET} ", end='')
+                                print(f"|[{Color.BOLD}{conn.color}X{Color.RESET}]", end='')
                             elif conn.is_completed:
                                 print(f"| {Color.BOLD}{conn.color}x{Color.RESET} ", end='')    
                             else:
@@ -215,7 +216,42 @@ class FlowFreeBoard(Board):
             print(f"{'-'* (self.columns* 4)}-")        
 
         if percentage == 100: print(f"{Color.GREEN}¡Felicidades! Has completado el nivel.{Color.RESET}") 
+    
+    def get_state(self):
+        """
+        The function `get_state` creates a board representation based on the grid and connections
+        provided.
+        :return: The `get_state` method returns a representation of the current state of the game board.
+        It creates a new board structure based on the existing grid and connections in the game. The
+        returned board contains information about the connections and their names, as well as the grid
+        elements.
         
+        Color names in uppercase are the color endpoints (circles).
+        Lowercase names are parts of a color's path.
+        
+        ej
+        ['BLUE', 'blue', '.', '.', 'YELLOW']
+        ['GREEN', 'blue', 'YELLOW', 'GREEN', '.']
+        ['.', 'blue', '.', 'BLUE', '.']
+        ['.', '.', '.', '.', '.']
+        ['RED', '.', '.', '.', 'RED']]
+        """
+        board = [[] for _ in range(self.rows)]
+        
+        for y in range(self.rows):
+            for x in range(self.columns):
+
+                if isinstance(self.grid[y][x], Connection):
+                    board[y].append(self.grid[y][x].name.upper())
+                elif (x, y) in [point for conn in self.connections for point in conn.road]:
+                    for conn in self.connections:
+                        if (x, y) in conn.road:
+                            # Celda llena que es parte de una conexión
+                                board[y].append(conn.name)
+                else:
+                    board[y].append(self.grid[y][x])
+        return board
+            
 class FlowFree:
        
     def __init__(self, board:Board=None) -> None:
@@ -327,9 +363,10 @@ class FlowFree:
         file = files[choice]
         self.board = FlowFreeBoard(os.path.join("levels", file))
         
-        
+        #MODIFICADO
     def play(self, player) -> None:
-        
+        is_human_player = isinstance(player, HumanPlayer)
+
         while True:
             
             percentage = self.board.percentage_filled()
@@ -338,13 +375,21 @@ class FlowFree:
                 self.board.show()
                 break
             
-            
+            # Show the board before the AI plays its turn to see the progress
+            if not is_human_player:
+                self.board.show()
+                time.sleep(0.1) # Small delay to visualize the AI's progress
+                
             move = player.play(self.board)
             
             if not move:
                 print("Juego terminado.")
                 break
             
+            #If the player is not a human player, skip the rest of the loop and continue to the next iteration
+            if not is_human_player:
+                continue
+
             x, y = move    
             
             # If the cell is not valid, the code will skip to the
@@ -426,12 +471,6 @@ class FlowFree:
             x_color, y_color = self.last_color_position
             self.last_move = move
             self.board.grid[y_color][x_color].add_to_road(move)
-    
-    def get_state(self,) -> any:
-        """
-        Returns the board state in a list of lists with simple values format. 
-        """
-        return [[cell.name if isinstance(cell, Connection) else cell for cell in row] for row in self.board.grid]
     
 # --- IGNORE ---
 if __name__ == '__main__':
