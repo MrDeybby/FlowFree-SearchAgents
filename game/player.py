@@ -7,13 +7,11 @@ class Player(ABC):
     def play(self):
         pass
     
-# [['red', 'green', 'red', 'blue', 'yellow', '.', 'yellow'], 
-# ['.', '.', '.', '.', '.', '.', '.'], 
-# ['.', '.', '.', '.', '.', '.', '.'], 
-# ['.', '.', '#', '.', '.', '.', '.'], 
-# ['.', '.', '.', '.', '.', '.', '.'], 
-# ['.', 'green', '.', '.', '.', '.', '.'], 
-# ['.', '.', '.', 'blue', '#', '.', '.']]
+# ['BLUE', 'blue', '.', '.', 'YELLOW']
+# ['GREEN', 'blue', 'YELLOW', 'GREEN', '.']
+# ['.', 'blue', '.', 'BLUE', '.']
+# ['.', '.', '.', '.', '.']
+# ['RED', '.', '.', '.', 'RED']]
 
 # The `HumanPlayer` class represents a player in a game who can interact with a board by selecting
 # cells and making moves.
@@ -43,7 +41,8 @@ class HumanPlayer(Player):
         else:
             x, y = self._current_cell
         
-        board.show(highlight_cell=(x, y))
+        # board.show(highlight_cell=(x, y))
+        board.get_state()
         move = Control.select(self.BOARD_CONTROL)
         
         if move == 'QUIT':
