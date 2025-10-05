@@ -1,15 +1,11 @@
 from game.control import Control
 from abc import ABC, abstractmethod
-import typing
-
-# AÑADE ESTE BLOQUE CONDICIONAL
-# Esto permite que los editores de código y las herramientas de análisis de tipos
-# vean la importación, pero no se ejecuta cuando corres el programa, evitando el error.
-if typing.TYPE_CHECKING:
-    from game.flow_free import FlowFreeBoard, FlowFree
-
-from game.base_player import Player
-
+class Player(ABC):
+    
+    @abstractmethod
+    def play(self):
+        pass
+    
 # [['red', 'green', 'red', 'blue', 'yellow', '.', 'yellow'], 
 # ['.', '.', '.', '.', '.', '.', '.'], 
 # ['.', '.', '.', '.', '.', '.', '.'], 
@@ -46,7 +42,8 @@ class HumanPlayer(Player):
         else:
             x, y = self._current_cell
         
-        board.show(highlight_cell=(x, y))
+        # board.show(highlight_cell=(x, y))
+        board.get_state()
         move = Control.select(self.BOARD_CONTROL)
         
         if move == 'QUIT':
