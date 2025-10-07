@@ -3,21 +3,25 @@ import time
 from collections import deque
 import random
 import math
+import tracemalloc
 
 
 from game.flow_free import FlowFreeBoard, Connection
-from game.base_player import Player
+from algorithms.metrics import Metrics
 
-class AStarPlayer(Player):
+class AStarPlayer(Metrics):
     def __init__(self):
-        super().__init__()
+        super().__init__(name="AStar")
         self.current_path_connections = {}
         # Para aprender de los estados que no llevan a una solución del 100%
         self.failed_states = set()
-        self.name = "AStar"
 
     # ESTRATEGIA PRINCIPAL: REINICIO ALEATORIO CON MEMORIA
-    def play(self, board: FlowFreeBoard) -> tuple | None:
+    def play(self, board: FlowFreeBoard, level_name: str = "unknown_level") -> tuple | None:
+        if self.start_time is None:
+            self.start_time = time.monotonic()
+            tracemalloc.start()
+
         all_completed = all(conn.is_completed for conn in board.connections)
 
         # CASO 1: CALLEJÓN SIN SALIDA (COMPLETO PERO NO LLENO)
@@ -34,6 +38,8 @@ class AStarPlayer(Player):
 
         # CASO 2: SOLUCIÓN ENCONTRADA
         if all_completed and board.percentage_filled() == 100:
+            print("A* Player: ¡Solución encontrada!")
+            self._generate_reports(board, level_name)
             return None
 
         # Lógica para elegir el siguiente movimiento
@@ -44,7 +50,10 @@ class AStarPlayer(Player):
         target_connection = random.choice(incomplete_connections)
         
         # Llama a la herramienta A* para encontrar un camino
-        path = self._astar_search(board, target_connection)
+        path, nodes_expanded, max_depth = self._astar_search(board, target_connection)
+        
+        self.total_nodes_expanded += nodes_expanded
+        self.max_search_depth_overall = max(self.max_search_depth_overall, max_depth)
 
         if path:
             # Si se encuentra un camino, se aplica
@@ -55,10 +64,9 @@ class AStarPlayer(Player):
             return path[-1]
         else:
             # CASO 3: ATASCO (A* NO ENCUENTRA CAMINO)
-            print(f"AI Player: Atascado en '{target_connection.name}'.")
+            print(f"AI atascado en '{target_connection.name}'.")
             board_state_tuple = tuple("".join(map(str, row)) for row in board.get_state())
             if board_state_tuple not in self.failed_states:
-                 print("Memorizando estado de atasco...")
                  self.failed_states.add(board_state_tuple)
             
             print(f"Tamaño de la memoria de fallos: {len(self.failed_states)}")
@@ -115,10 +123,11 @@ class AStarPlayer(Player):
         return final_heuristic
 
     # ALGORITMO DE BÚSQUEDA A*
-    def _astar_search(self, initial_board: FlowFreeBoard, target_connection: Connection) -> list[tuple[int, int]] | None:
-        start_point = target_connection.points[0]
-        end_point = target_connection.points[1]
-        
+    def _astar_search(self, initial_board: FlowFreeBoard, target_connection: Connection):
+        nodes_expanded = 0
+        max_depth = 0
+        start_point, end_point = target_connection.points
+
         open_set = []
         heuristic_cost = self._calculate_combined_heuristic(start_point, end_point, initial_board)
         heapq.heappush(open_set, (heuristic_cost, start_point, [start_point]))
@@ -127,10 +136,12 @@ class AStarPlayer(Player):
         visited_states = set()
 
         while open_set:
-            f, current_point, path = heapq.heappop(open_set)
+            _, current_point, path = heapq.heappop(open_set)
+            nodes_expanded += 1
+            max_depth = max(max_depth, len(path))
 
             if current_point == end_point:
-                return path
+                return path, nodes_expanded, max_depth
 
             state_tuple = (current_point, tuple(path))
             if state_tuple in visited_states:
@@ -138,9 +149,7 @@ class AStarPlayer(Player):
             visited_states.add(state_tuple)
 
             x, y = current_point
-            neighbors_coords = [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]
-
-            for nx, ny in neighbors_coords:
+            for nx, ny in [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]:
                 if not initial_board._validate_cell(nx, ny):
                     continue
                 
@@ -148,16 +157,11 @@ class AStarPlayer(Player):
                 if neighbor_point in path:
                     continue
 
-                is_blocked_by_other_connection = False
-                for conn in initial_board.connections:
-                    if conn != target_connection and neighbor_point in conn.road:
-                        is_blocked_by_other_connection = True
-                        break
-                    if conn != target_connection and (neighbor_point in conn.points):
-                        is_blocked_by_other_connection = True
-                        break
-                
-                if is_blocked_by_other_connection:
+                is_blocked = any(
+                    conn != target_connection and (neighbor_point in conn.road or neighbor_point in conn.points)
+                    for conn in initial_board.connections
+                )
+                if is_blocked:
                     continue
                 
                 tentative_g_score = g_score.get(current_point, float('inf')) + 1
@@ -167,4 +171,4 @@ class AStarPlayer(Player):
                     new_path = path + [neighbor_point]
                     heapq.heappush(open_set, (f_score, neighbor_point, new_path))
 
-        return None
+        return None, nodes_expanded, max_depth
