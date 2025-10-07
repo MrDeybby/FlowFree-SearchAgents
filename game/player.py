@@ -1,0 +1,101 @@
+from game.control import Control
+from game.base_player import Player
+# [['red', 'green', 'red', 'blue', 'yellow', '.', 'yellow'], 
+# ['.', '.', '.', '.', '.', '.', '.'], 
+# ['.', '.', '.', '.', '.', '.', '.'], 
+# ['.', '.', '#', '.', '.', '.', '.'], 
+# ['.', '.', '.', '.', '.', '.', '.'], 
+# ['.', 'green', '.', '.', '.', '.', '.'], 
+# ['.', '.', '.', 'blue', '#', '.', '.']]
+
+# The `HumanPlayer` class represents a player in a game who can interact with a board by selecting
+# cells and making moves.
+class HumanPlayer(Player):
+    name = "Humano"
+    # These dictionaries are defining the control mappings for the HumanPlayer class in the FlowFree
+    # game. Each dictionary maps key inputs to specific actions or movements within the game:
+    BOARD_CONTROL = {'W': (0, -1), 'A': (-1, 0), 'S': (0, 1), 'D': (1, 0), 'ENTER': 'SELECT', 'ESC': 'QUIT'}
+    NUMBER_SELECTION_CONTROL = {'A': -1, 'D': 1, 'ENTER': 'SELECT', 'ESC': 'QUIT'}
+    SELECT_CONTROL = {'A': -1, 'D': 1, 'ENTER': 'SELECT', 'ESC': 'QUIT'}
+    
+    def __init__(self):
+        self._current_cell = None
+        
+    @property
+    def position(self):
+        return self._current_cell
+    
+    @position.setter
+    def position(self, value):
+        self._current_cell = value
+    
+    def play(self, board: 'FlowFreeBoard') -> None:
+        if not self._current_cell:
+            current_cell = self._select_cell(board)          
+            return current_cell
+        else:
+            x, y = self._current_cell
+        
+        board.show(highlight_cell=(x, y))
+        move = Control.select(self.BOARD_CONTROL)
+        
+        if move == 'QUIT':
+            return None
+        elif move == 'SELECT':
+            # Deselect current cell for choise another whith self._select_cell
+            self._current_cell = None
+            return (x, y)
+        
+        move_x, move_y = move
+        current_cell = x + move_x, y + move_y
+        return (current_cell)
+        
+    @classmethod
+    def _select_cell(cls, board: 'FlowFreeBoard', current_index = 0) -> any:
+        
+        """
+        This function selects a cell on a FlowFree board based on user input and moves through the
+        selectable cells in a loop.
+        
+        :param cls: In the context of a class method in Python, `cls` refers to the class itself. It is a
+        convention to use `cls` as the first parameter name in class methods to represent the class object.
+        This allows you to access class variables and methods within the method
+        :param board: The `board` parameter in the `_select_cell` method is of type `FlowFreeBoard`. It is
+        used to represent the game board on which the selection of cells is being made. The method operates
+        on this board to select a cell based on the current index provided
+        :type board: FlowFreeBoard
+        :param current_index: The `current_index` parameter in the `_select_cell` method is used to keep
+        track of the current index of the cell being selected from the list of selectable cells on the
+        board. It is initialized with a default value of 0, indicating the starting point of cell selection.
+        The method iterates, defaults to 0 (optional)
+        :return: The method `_select_cell` returns the current cell that the player has selected on the game
+        board. If the player chooses to quit the game, it returns `None`.
+        """
+        
+        numbers_cells = board._get_selectable_cells()
+        current_cell = numbers_cells[current_index]
+
+        while True:
+            board.show(current_cell) # Display the board
+            print("Selecciona una salida")
+            move = Control.select(cls.SELECT_CONTROL)
+            
+            if move == 'SELECT':
+                return current_cell
+            elif move == 'QUIT':
+                return None
+            
+            # Move selection
+            current_index += move
+            if current_index < 0: current_index = len(numbers_cells) - 1
+            elif current_index == len(numbers_cells): current_index = 0
+            current_cell = numbers_cells[current_index]
+                
+#IGNORAR            
+if __name__ == "__main__":
+    from game.flow_free import FlowFreeBoard, FlowFree
+    board = FlowFreeBoard("levels/5x5_4C_1.txt")
+    game = FlowFree(board)
+    player = HumanPlayer()
+    game.play(player=player)    
+        
