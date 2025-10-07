@@ -1,11 +1,5 @@
 from game.control import Control
-from abc import ABC, abstractmethod
-class Player(ABC):
-    
-    @abstractmethod
-    def play(self):
-        pass
-    
+from game.base_player import Player
 # [['red', 'green', 'red', 'blue', 'yellow', '.', 'yellow'], 
 # ['.', '.', '.', '.', '.', '.', '.'], 
 # ['.', '.', '.', '.', '.', '.', '.'], 
