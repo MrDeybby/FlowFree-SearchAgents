@@ -96,8 +96,9 @@ class BFSPlayer(Player):
                         if not self._in(nx, ny): continue
                         t = self._cell(nx, ny)
                         if t == '#': continue
-                        if isinstance(t, str) and t.isupper() and t.upper()!=color.upper():
-                            continue
+                        # if t.isupper() and t != color.upper():
+                        #     # print("Conflict", (nx, ny), t, color)
+                        #     continue
                         if isinstance(t, str) and t.islower() and t != color.lower():
                             continue
                         if t == color.lower():
@@ -109,6 +110,9 @@ class BFSPlayer(Player):
                         elif isinstance(t, str) and t.isupper() and t.upper()==color.upper():
                             op = (color, (fx, fy), (nx, ny))
                             nbrs.append(BFSPlayer._State([list(r) for r in self.m], self._endpoints, parent=self, op=op, depth=self.depth+1))
+            # Debug
+            # print("Nbrs for depth", self.depth, ":", len(nbrs))
+            print([list(r) for r in self.m])
             return nbrs
 
     def _plan_with_bfs(self, board: FlowFreeBoard):
@@ -127,6 +131,7 @@ class BFSPlayer(Player):
         solution = None
 
         while frontier:
+
             st = frontier.popleft()
             if st in explored:
                 continue
@@ -157,8 +162,9 @@ class BFSPlayer(Player):
 
         if not self._planned:
             self._plan = deque(self._plan_with_bfs(board))
-            for conn in board.connections:
-                conn.clean_road()
+            # for conn in board.connections:
+                # print("Clearing", conn.name)
+            #     conn.clean_road()
             self._planned = True
 
         if not self._plan:
@@ -169,6 +175,7 @@ class BFSPlayer(Player):
         cmap = {c.name: c for c in board.connections}
         conn = cmap[color]
         conn.add_to_road(to_xy)
-        if self._show_steps:
-            board.show()
+        # if self._show_steps:
+        board.show()
+        
         return to_xy
