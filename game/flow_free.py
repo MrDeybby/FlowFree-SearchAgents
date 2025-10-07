@@ -431,8 +431,13 @@ class FlowFree:
         #MODIFICADO
     def play(self, player) -> None:
         is_human_player = isinstance(player, HumanPlayer)
+        is_search_agent = not is_human_player
 
         while True:
+<<<<<<< HEAD
+            # Show the board before the player makes a move
+            if is_search_agent:
+=======
             
             percentage = self.board.percentage_filled()
             
@@ -440,44 +445,40 @@ class FlowFree:
                 if not is_human_player:
                     level_name = self.create_level_name(player)
                     player._generate_reports(self.board, level_name=level_name)
+>>>>>>> 60ef64efc52b5c89f3db31c12bb3d53c061d1523
                 self.board.show()
-                break
+                time.sleep(0.1)
+
+            #Calls the play method of the player (either human or AI)
+            if is_search_agent:
+                move = player.play(self.board, self.level)
+            else:
+                move = player.play(self.board)
             
-            # Show the board before the AI plays its turn to see the progress
-            if not is_human_player:
-                self.board.show()
-                time.sleep(0.1) # Small delay to visualize the AI's progress
-                
-            move = player.play(self.board)
-            
+            # If the AI agent finishes, it returns None and the game ends.
             if not move:
                 print("Juego terminado.")
                 break
             
-            #If the player is not a human player, skip the rest of the loop and continue to the next iteration
-            if not is_human_player:
+            # If it's an AI agent, its logic has already been executed. Move to the next cycle.
+            if is_search_agent:
                 continue
 
-            x, y = move    
+            # From here on, it only runs for the human player.
+            x, y = move
             
-            # If the cell is not valid, the code will skip to the
-            # next iteration using the `continue` statement, without making any changes to the board.
             if not self.board._validate_cell(x, y):
                 continue
             
-            # if the cell is equal to the last move done by user, the player`s position will marked as None for select a new cell of out
             elif move == self.last_move:
-                # The code snippet is checking if the variable `move` is equal to
-                # `self.last_color_position`. If they are equal, it then calls the `pop_road()` method
-                # on the grid element at position `y_color` and `x_color`, it will delete the current color of the color`s path.
                 if move == self.last_color_position:
+                    x_color, y_color = self.last_color_position
                     self.board.grid[y_color][x_color].pop_road()
                 self.last_move = None
                 self.last_color_position = None
                 player.position = None
                 continue
             
-            # If player moves to the circle he has begined, the move is marked as None for delete the X to the path
             elif self.last_color_position and move == self.last_color_position:
                 x_color, y_color = self.last_color_position
                 self.board.grid[y_color][x_color].pop_road()
@@ -485,15 +486,11 @@ class FlowFree:
                 player.position = move
                 continue
             
-            # When player selects a new begin position
             elif not self.last_color_position:
-                # If it is a circle point the road will be cleaned and the point will be added to the road.
                 if isinstance(self.board.grid[y][x], Connection):
                     self.last_color_position = (x, y)
                     self.board.grid[y][x].clean_road()
                     self.board.grid[y][x].add_to_road(move)
-                    
-                # If player select a X point for begin, the last_color_position will be the color where point is
                 else:
                     for conn in self.board.connections:
                         if (x, y) in conn.road:
@@ -502,43 +499,33 @@ class FlowFree:
                 player.position = move
                 continue
             
-            # If the player has selected a color and try connect to a circle point, first verify if it circle is the
-            # same color, if not, the board will not change
             elif isinstance(self.board.grid[y][x], Connection):
                 x_color, y_color = self.last_color_position
                 if self.board.grid[y][x].name != self.board.grid[y_color][x_color].name:
-                    continue # Not same color
+                    continue
                 
-                # If it is the same color, the road is completed, and send to player to select another color/path
-                self.board.grid[y][x].add_to_road(move)
-                self.board.grid[y][x].check_completion()
+                self.board.grid[y_color][x_color].add_to_road(move)
+                self.board.grid[y_color][x_color].check_completion()
                 self.last_color_position = None
                 player.position = None
-                # Flow free move increase 1
                 self.board.flow_free_moves += 1
                 continue
 
-            
-            # The code snippet is checking if the tuple (x, y) is present in any of the road
-            # connections in the self.board. If it is found in a connection, it breaks the road
-            # connection at that point by calling the `break_road` method on that connection.
             elif (x, y) in [point for conn in self.board.connections for point in conn.road]:
                 for conn in self.board.connections:
                     if (x, y) in conn.road:
                         conn.break_road((x, y))
                         break
             
-            
-                
-            # The code snippet is setting the position of a player to a new move. It then retrieves
-            # the last color position of the player and assigns it to `x_color` and `y_color`
-            # variables. The `last_move` attribute of the player is updated with the new move.
-            # Finally, the `add_to_road` method is called on the last_color_position grid on the board
-            # with the new move as an argument.
             player.position = move
             x_color, y_color = self.last_color_position
             self.last_move = move
             self.board.grid[y_color][x_color].add_to_road(move)
+
+            # After the human makes their move, we check if they have won.
+            if self.board.percentage_filled() == 100:
+                self.board.show() 
+                break
     
     def algorithms_test(self, player, board) -> None:
         self.board = board
