@@ -6,6 +6,7 @@ from game.control import Control
 import os, time
 from game.player import HumanPlayer
 
+
 # The `Connection` class represents a connection between two points on a Flow Free board with methods
 # to manage the path and check completion status.
 class Connection:
@@ -259,6 +260,7 @@ class FlowFree:
         self.last_color_position = None
         self.last_move = None
         self.load_list_levels()
+        self.level = None
     
     def load_list_levels(self) -> None:
         """
@@ -308,7 +310,7 @@ class FlowFree:
     
     
         
-    def app(self, player) -> None:
+    def app(self) -> None:
         """
         Presents a menu to the player to either play a game or exit, then proceeds to
         select a game level and play the game.
@@ -316,21 +318,83 @@ class FlowFree:
         :param player: Represent the player who is currently playing the game. Human or algorithm
         :return: The `app` method is returning `None`.
         """
+        player = None
         while not self.board:
-            options = ["Jugar", "Salir"]
+            options = ["Jugar", "Seleccionar Jugador", "Salir"]
             menu = Menu(options, "Flow Free")
             choice = menu.select()
             if options[choice] == "Salir":
                 print("Saliendo del juego...")
                 return
+            elif options[choice] == "Seleccionar Jugador":
+                player = self.select_player()
+                if not player:
+                    continue
+                print(f"Jugador seleccionado: {player.name}")
+                print("Presiona Enter para continuar")
+                Control.select({'ENTER':None})
+                continue
+                
             self.select_level()
             
             if not self.board:
                 continue
+            if not player:
+                player = HumanPlayer()
+            if not player:
+                self.board = None
+                continue
+            
             self.play(player=player)
             self.board = None
             print('Presiona Enter para salir')
             Control.select({'ENTER':None})
+    
+    def select_player(self) -> any:
+        """
+        Presents a menu to select a player type (Human or Algorithm) and returns the selected player instance.
+        
+        :return: The `select_player` method is returning an instance of `HumanPlayer`, `DFSPlayer`, `BFSPlayer`, or
+        `AStarPlayer` classes, based on the user's selection from the menu. If the user selects "Volver", the method returns
+        `None`.
+        """
+        from algorithms.astar import AStarPlayer as AStar
+        from algorithms.bfs import BFSPlayer as BFS
+        from algorithms.dfs import DFSPlayer as DFS
+        options = ["Humano", "DFS", "BFS", "A*", "Volver"]
+        menu = Menu(options, "Flow Free - Seleccionar jugador")
+        choice = menu.select()
+        
+        if options[choice] == "Humano":
+            return HumanPlayer()
+        elif options[choice] == "DFS":
+            return DFS()
+        elif options[choice] == "BFS":
+            return BFS()
+        elif options[choice] == "A*":
+            return AStar()
+        else:
+            return None
+    
+    def create_level_name(self, player) -> None:
+        """
+        Creates a level name based on the board's dimensions and number of colors.
+        :return: The `create_level_name` method is returning a string that represents the level name.
+        The level name is created by combining the number of rows, number of columns, and number of
+        colors in the format "{rows}x{columns}_{colors}C.txt".
+        """
+        player_name = player.name
+        number = 1
+        name_files = self.level.replace(".txt", "")
+        level_name = f"{player_name}_{name_files}-test_{number}.txt"
+        ruta = os.path.join("output", level_name)
+        
+        while os.path.exists(ruta):
+            level_name = f"{player_name}_{name_files}-test_{number}.txt"
+            ruta = os.path.join("output", level_name)
+            number += 1
+        
+        return level_name
     
     def select_level(self) -> None:
         """
@@ -362,6 +426,7 @@ class FlowFree:
             
         file = files[choice]
         self.board = FlowFreeBoard(os.path.join("levels", file))
+        self.level = file
         
         #MODIFICADO
     def play(self, player) -> None:
@@ -372,8 +437,9 @@ class FlowFree:
             percentage = self.board.percentage_filled()
             
             if percentage == 100:
-                #if not is_human_player:
-                #    player._generate_reports(self.board, level_name="5x5")
+                if not is_human_player:
+                    level_name = self.create_level_name(player)
+                    player._generate_reports(self.board, level_name=level_name)
                 self.board.show()
                 break
             
@@ -474,6 +540,18 @@ class FlowFree:
             self.last_move = move
             self.board.grid[y_color][x_color].add_to_road(move)
     
+    def algorithms_test(self, player, board) -> None:
+        self.board = board
+
+        while True:
+            percentage = self.board.percentage_filled()
+            if percentage == 100:
+                level_name = self.create_level_name(player)
+                player._generate_reports(self.board, level_name=level_name)
+                break
+            
+            player.play(self.board)
+            
 # --- IGNORE ---
 if __name__ == '__main__':
     board = FlowFreeBoard("levels/5x5_4C_1.txt")

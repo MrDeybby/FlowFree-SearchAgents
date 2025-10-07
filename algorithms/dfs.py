@@ -152,7 +152,7 @@ class DFSPlayer(Player):
         os.makedirs(output_dir, exist_ok=True)
         
         # --- Escribir archivo .txt ---
-        txt_filename = os.path.join(output_dir, f"DFS_{level_name.replace('.txt', '')}.txt")
+        txt_filename = os.path.join(output_dir, f"{level_name.replace('.txt', '')}.txt")
         with open(txt_filename, 'w') as f:
             f.write(f"path_to_goal: {path_to_goal_matrix}\n")
             f.write(f"cost_of_path: {cost_of_path}\n")

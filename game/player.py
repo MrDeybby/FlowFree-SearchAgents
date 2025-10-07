@@ -1,11 +1,5 @@
 from game.control import Control
-from abc import ABC, abstractmethod
-class Player(ABC):
-    
-    @abstractmethod
-    def play(self):
-        pass
-    
+from game.base_player import Player
 # [['red', 'green', 'red', 'blue', 'yellow', '.', 'yellow'], 
 # ['.', '.', '.', '.', '.', '.', '.'], 
 # ['.', '.', '.', '.', '.', '.', '.'], 
@@ -17,7 +11,7 @@ class Player(ABC):
 # The `HumanPlayer` class represents a player in a game who can interact with a board by selecting
 # cells and making moves.
 class HumanPlayer(Player):
-    
+    name = "Humano"
     # These dictionaries are defining the control mappings for the HumanPlayer class in the FlowFree
     # game. Each dictionary maps key inputs to specific actions or movements within the game:
     BOARD_CONTROL = {'W': (0, -1), 'A': (-1, 0), 'S': (0, 1), 'D': (1, 0), 'ENTER': 'SELECT', 'ESC': 'QUIT'}
@@ -42,8 +36,7 @@ class HumanPlayer(Player):
         else:
             x, y = self._current_cell
         
-        # board.show(highlight_cell=(x, y))
-        board.get_state()
+        board.show(highlight_cell=(x, y))
         move = Control.select(self.BOARD_CONTROL)
         
         if move == 'QUIT':
