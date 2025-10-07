@@ -97,7 +97,7 @@ class HumanPlayer(Player):
             elif current_index == len(numbers_cells): current_index = 0
             current_cell = numbers_cells[current_index]
                 
-            
+#IGNORAR            
 if __name__ == "__main__":
     from game.flow_free import FlowFreeBoard, FlowFree
     board = FlowFreeBoard("levels/5x5_4C_1.txt")

@@ -1,0 +1,3 @@
+Algorithm-Level,cost_of_path,nodes_expanded,search_depth,max_search_depth,running_time,max_ram_usage
+DFS-5x5,21,261,21,13,4.42100000,0.00790787
+DFS-5x5,21,522,21,13,13.06200000,0.00000000

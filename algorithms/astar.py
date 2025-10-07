@@ -14,6 +14,7 @@ class AStarPlayer(Player):
         self.current_path_connections = {}
         # Para aprender de los estados que no llevan a una solución del 100%
         self.failed_states = set()
+        self.name = "AStar"
 
     # ESTRATEGIA PRINCIPAL: REINICIO ALEATORIO CON MEMORIA
     def play(self, board: FlowFreeBoard) -> tuple | None:
@@ -70,10 +71,10 @@ class AStarPlayer(Player):
         """
         Calcula una heurística combinada que ahora incluye una "Bonificación por Exploración".
         """
-        w1 = 0.3# Peso para Manhattan
+        w1 = 0.2# Peso para Manhattan
         w2 = 0.2  # Peso para Penalización por Encierro
         w3 = 0.1  # Peso para Euclidiana
-        w4 = 0.4# Peso para Bonificación por Exploración
+        w4 = 0.5# Peso para Bonificación por Exploración
 
         # 1. Heurística de Manhattan (h1)
         h1 = abs(p1[0] - p2[0]) + abs(p1[1] - p2[1])
