@@ -20,6 +20,8 @@ class DFSPlayer(Player):
         """Inicializa el agente, la memoria y las variables para las métricas."""
         super().__init__()
         self.failed_states = set()
+        self.name = "DFS"
+    
 
         # SECCIÓN DE MÉTRICAS
         self.start_time = None

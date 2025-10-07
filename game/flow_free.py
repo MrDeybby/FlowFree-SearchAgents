@@ -372,8 +372,8 @@ class FlowFree:
             percentage = self.board.percentage_filled()
             
             if percentage == 100:
-                if not is_human_player:
-                    player._generate_reports(self.board, level_name="5x5")
+                #if not is_human_player:
+                #    player._generate_reports(self.board, level_name="5x5")
                 self.board.show()
                 break
             
