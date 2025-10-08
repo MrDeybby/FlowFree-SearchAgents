@@ -435,6 +435,16 @@ class FlowFree:
         is_search_agent = not is_human_player
 
         while True:
+            
+            # After the human makes their move, we check if they have won.
+            
+            if self.board.percentage_filled() == 100:
+                self.board.show() 
+                if is_search_agent:
+                    level_name = self.create_level_name(player)
+                    player._generate_reports(self.board, level_name=level_name)
+                break
+            
             # Show the board before the player makes a move
             if is_search_agent:
                 self.board.show()
@@ -512,11 +522,6 @@ class FlowFree:
             x_color, y_color = self.last_color_position
             self.last_move = move
             self.board.grid[y_color][x_color].add_to_road(move)
-
-            # After the human makes their move, we check if they have won.
-            if self.board.percentage_filled() == 100:
-                self.board.show() 
-                break
     
     def algorithms_test(self, player, board) -> None:
         self.board = board

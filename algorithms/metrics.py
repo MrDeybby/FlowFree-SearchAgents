@@ -65,7 +65,7 @@ class Metrics(Player):
                 writer.writerow(headers)
             
             row_data = [
-                f"DFS-{level_name.replace('.txt', '')}",
+                f"{level_name.replace('.txt', '')}",
                 cost_of_path,
                 self.total_nodes_expanded,
                 search_depth,
