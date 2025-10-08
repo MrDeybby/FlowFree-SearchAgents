@@ -1,0 +1,7 @@
+path_to_goal: [['R', 'R', 'R', 'R', 'R', 'R', 'N', 'N', 'N'], ['R', 'B', 'B', 'B', 'B', 'F', 'F', 'F', 'N'], ['R', 'B', 'V', 'V', 'V', 'V', 'Y', 'F', 'N'], ['R', 'B', 'V', 'Y', 'Y', 'Y', 'Y', 'F', 'N'], ['R', 'B', 'V', 'F', 'F', 'F', 'F', 'F', 'N'], ['R', 'B', 'V', 'F', 'A', 'A', 'A', 'A', 'N'], ['R', 'M', 'A', 'A', 'A', 'M', 'M', 'A', 'N'], ['R', 'M', 'M', 'M', 'M', 'M', 'P', 'P', 'N'], ['R', 'R', 'R', 'R', 'R', 'R', 'R', 'P', 'P']]
+cost_of_path: 72
+nodes_expanded: 4565
+search_depth: 72
+max_search_depth: 20
+running_time: 0.14000000
+max_ram_usage: 0.00000000
