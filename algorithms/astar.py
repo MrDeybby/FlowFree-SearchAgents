@@ -11,12 +11,12 @@ from game.flow_free import FlowFreeBoard, Connection
 from algorithms.metrics import Metrics
 
 class AStarPlayer(Metrics):
-    def __init__(self, heuristic: list = ["manhattan", "penalty_enclosure", "euclidean", "exploration_bonus"]):
+    def __init__(self, heuristics: list = ["manhattan", "penalty_enclosure", "euclidean", "exploration_bonus"]):
         super().__init__(name="AStar")
         self.current_path_connections = {}
         # Para aprender de los estados que no llevan a una solución del 100%
         self.failed_states = set()
-        self.heuristic = heuristic
+        self.heuristics = heuristics
         
     # ESTRATEGIA PRINCIPAL: REINICIO ALEATORIO CON MEMORIA
     def play(self, board: FlowFreeBoard, level_name: str = "unknown_level") -> tuple | None:
@@ -128,10 +128,10 @@ class AStarPlayer(Metrics):
         """
         Calcula una heurística combinada que ahora incluye una "Bonificación por Exploración".
         """
-        w1 = 0.2 if "manhattan" in self.heuristic else 0  # Peso para Manhattan # Peso para Manhattan 
-        w2 = 0.2 if "" "penalty_enclosure" in self.heuristic else 0 # Peso para Penalización por Encierro
-        w3 = 0.1  if "" "euclidean" in self.heuristic else 0 # Peso para Euclidiana
-        w4 = 0.5 if "" "exploration_bonus" in self.heuristic else 0  # Peso para Bonificación por Exploración
+        w1 = 0.2 if "manhattan" in self.heuristics else 0  # Peso para Manhattan # Peso para Manhattan 
+        w2 = 0.2 if "" "penalty_enclosure" in self.heuristics else 0 # Peso para Penalización por Encierro
+        w3 = 0.1  if "" "euclidean" in self.heuristics else 0 # Peso para Euclidiana
+        w4 = 0.5 if "" "exploration_bonus" in self.heuristics else 0  # Peso para Bonificación por Exploración
 
         # 1. Heurística de Manhattan (h1)
         h1_norm = self._manhattan(p1, p2, board)
@@ -156,7 +156,7 @@ class AStarPlayer(Metrics):
         start_point, end_point = target_connection.points
 
         open_set = []
-        heuristic_cost = self.heuristic(start_point, end_point, initial_board)
+        heuristic_cost = self._calculate_combined_heuristic(start_point, end_point, initial_board)
         heapq.heappush(open_set, (heuristic_cost, start_point, [start_point]))
 
         g_score = {start_point: 0}
@@ -231,7 +231,7 @@ class AStarPlayer(Metrics):
             f.write(f"max_search_depth: {self.max_search_depth_overall}\n")
             f.write(f"running_time: {running_time:.8f}\n")
             f.write(f"max_ram_usage: {max_ram_usage:.8f}\n")
-            f.write(f"Heuristic: {', '.join(self.heuristic)}.\n")
+            f.write(f"Heuristic: {', '.join(self.heuristics)}.\n")
         print(f"\nReporte .txt guardado en: {txt_filename}")
         
         csv_filename = os.path.join(output_dir, "benchmark.csv")
@@ -244,7 +244,7 @@ class AStarPlayer(Metrics):
                 writer.writerow(headers)
             
             row_data = [
-                f"{level_name.replace('.txt', '')}: {self.heuristic.join(' - ')}",
+                f"{level_name.replace('.txt', '')}: {' - '.join(self.heuristics)}.",
                 cost_of_path,
                 self.total_nodes_expanded,
                 search_depth,
