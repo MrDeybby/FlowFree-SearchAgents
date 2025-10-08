@@ -377,7 +377,7 @@ class FlowFree:
             return None
     
     
-    def create_level_name(self, name_files, player) -> None:
+    def create_level_name(self, player) -> None:
         """
         Creates a level name based on the board's dimensions and number of colors.
         :return: The `create_level_name` method is returning a string that represents the level name.
@@ -518,6 +518,17 @@ class FlowFree:
                 self.board.show() 
                 break
     
+    def algorithms_test(self, player, board) -> None:
+        self.board = board
+
+        while True:
+            percentage = self.board.percentage_filled()
+            if percentage == 100:
+                level_name = self.create_level_name(player)
+                player._generate_reports(self.board, level_name=level_name)
+                break
+            
+            player.play(self.board)
 # --- IGNORE ---
 if __name__ == '__main__':
     board = FlowFreeBoard("levels/5x5_4C_1.txt")

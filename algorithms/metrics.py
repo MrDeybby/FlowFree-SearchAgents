@@ -1,6 +1,7 @@
 import os
 import time
 import tracemalloc
+import csv
 from abc import abstractmethod
 
 from game.base_player import Player
@@ -42,7 +43,7 @@ class Metrics(Player):
         os.makedirs(output_dir, exist_ok=True)
         
         # A TXT
-        file_base_name = f"{self.name}_{level_name.replace('.txt', '')}"
+        file_base_name = f"{level_name.replace('.txt', '')}"
         txt_filename = os.path.join(output_dir, f"{file_base_name}.txt")
         with open(txt_filename, 'w') as f:
             f.write(f"path_to_goal: {path_to_goal_matrix}\n")
@@ -53,3 +54,24 @@ class Metrics(Player):
             f.write(f"running_time: {running_time:.8f}\n")
             f.write(f"max_ram_usage: {max_ram_usage:.8f}\n")
         print(f"\nReporte .txt guardado en: {txt_filename}")
+        
+        csv_filename = os.path.join(output_dir, "benchmark.csv")
+        file_exists = os.path.isfile(csv_filename)
+        
+        with open(csv_filename, 'a', newline='') as f:
+            writer = csv.writer(f)
+            headers = ["Algorithm-Level", "cost_of_path", "nodes_expanded", "search_depth", "max_search_depth", "running_time", "max_ram_usage"]
+            if not file_exists:
+                writer.writerow(headers)
+            
+            row_data = [
+                f"DFS-{level_name.replace('.txt', '')}",
+                cost_of_path,
+                self.total_nodes_expanded,
+                search_depth,
+                self.max_search_depth_overall,
+                f"{running_time:.8f}",
+                f"{max_ram_usage:.8f}"
+            ]
+            writer.writerow(row_data)
+        print(f"Resultados añadidos a: {csv_filename}")
