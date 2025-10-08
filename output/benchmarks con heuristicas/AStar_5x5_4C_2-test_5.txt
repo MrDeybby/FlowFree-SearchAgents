@@ -1,0 +1,8 @@
+path_to_goal: [['B', 'B', 'B', 'B', 'Y'], ['G', 'G', 'G', 'B', 'Y'], ['G', 'R', 'G', 'B', 'Y'], ['G', 'R', 'B', 'B', 'Y'], ['G', 'R', 'Y', 'Y', 'Y']]
+cost_of_path: 21
+nodes_expanded: 295
+search_depth: 21
+max_search_depth: 10
+running_time: 0.01600000
+max_ram_usage: 0.00000000
+Heuristic: euclidean, manhattan.

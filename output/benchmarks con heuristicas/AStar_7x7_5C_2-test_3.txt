@@ -1,0 +1,8 @@
+path_to_goal: [['N', 'N', 'A', 'A', 'R', 'R', 'R'], ['N', 'R', 'V', 'A', 'R', 'Y', 'R'], ['R', 'R', 'V', 'A', 'A', 'Y', 'R'], ['R', 'A', 'V', 'V', 'A', 'Y', 'R'], ['R', 'A', 'A', 'A', 'A', 'Y', 'R'], ['R', 'Y', 'Y', 'Y', 'Y', 'Y', 'R'], ['R', 'R', 'R', 'R', 'R', 'R', 'R']]
+cost_of_path: 44
+nodes_expanded: 1616
+search_depth: 44
+max_search_depth: 22
+running_time: 0.12500000
+max_ram_usage: 0.02207375
+Heuristic: manhattan, penalty_enclosure.

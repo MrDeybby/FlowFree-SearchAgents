@@ -1,0 +1,10 @@
+Algorithm-Level,cost_of_path,nodes_expanded,search_depth,max_search_depth,running_time,max_ram_usage
+AStar_5x5_4C_1-test_1: exploration_bonus.,21,54,21,10,0,0.00465107
+AStar_5x5_4C_2-test_1: exploration_bonus.,21,94,21,10,0,0
+AStar_5x5_4C_3-test_1: exploration_bonus.,21,269,21,10,0.015,0
+AStar_5x5_4C_4-test_1: exploration_bonus.,21,304,21,10,0.015,0
+AStar_7x7_6C_1-test_1: exploration_bonus.,43,384,43,18,0.015,0
+AStar_7x7_5C_2-test_1: exploration_bonus.,44,469,44,22,0.031,0
+AStar_7x7_5C_3-test_1: exploration_bonus.,44,1777,44,22,0.047,0
+AStar_7x7_5C_4-test_1: exploration_bonus.,44,4400,44,22,0.094,0
+AStar_9x9_9C_3-test_1: exploration_bonus.,72,4691,72,22,0.094,0

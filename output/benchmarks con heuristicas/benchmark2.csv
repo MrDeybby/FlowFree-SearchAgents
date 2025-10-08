@@ -1,0 +1,37 @@
+Algorithm-Level,cost_of_path,nodes_expanded,search_depth,max_search_depth,running_time,max_ram_usage
+AStar_5x5_4C_1-test_1: manhattan.,21,33,21,10,0,0.00247955
+AStar_5x5_4C_2-test_1: manhattan.,21,130,21,10,0.015,0
+AStar_5x5_4C_3-test_1: manhattan.,21,166,21,10,0.031,0
+AStar_5x5_4C_4-test_1: manhattan.,21,273,21,10,0.047,0
+AStar_7x7_6C_1-test_1: manhattan.,43,570,43,18,0.062,0
+AStar_7x7_5C_4-test_1: manhattan.,44,2612,44,20,0.125,0
+AStar_7x7_5C_3-test_1: manhattan.,44,3290,44,20,0.14,0
+AStar_7x7_5C_2-test_1: manhattan.,44,4768,44,22,0.172,0
+AStar_5x5_4C_4-test_2: manhattan.,21,4832,21,22,0.172,0
+AStar_7x7_6C_1-test_2: manhattan.,43,5550,43,22,0.203,0
+AStar_5x5_4C_1-test_2: manhattan - penalty_enclosure.,21,58,21,10,0,0.00459385
+AStar_5x5_4C_2-test_2: manhattan - penalty_enclosure.,21,228,21,10,0.015,0
+AStar_5x5_4C_3-test_2: manhattan - penalty_enclosure.,21,286,21,10,0.015,0
+AStar_5x5_4C_4-test_2: manhattan - penalty_enclosure.,21,320,21,10,0.015,0
+AStar_7x7_6C_1-test_2: manhattan - penalty_enclosure.,43,556,43,18,0.031,0
+AStar_5x5_4C_1-test_3: manhattan - penalty_enclosure - euclidean.,21,35,21,10,0,1.06767368
+AStar_5x5_4C_2-test_3: manhattan - penalty_enclosure - euclidean.,21,283,21,10,0.016,0
+AStar_5x5_4C_3-test_3: manhattan - penalty_enclosure - euclidean.,21,335,21,10,0.016,0
+AStar_5x5_4C_4-test_3: manhattan - penalty_enclosure - euclidean.,21,619,21,10,0.031,0
+AStar_7x7_6C_1-test_3: manhattan - penalty_enclosure - euclidean.,43,827,43,18,0.047,0
+AStar_7x7_5C_2-test_2: manhattan - penalty_enclosure - euclidean.,44,83,44,22,0,0.00533295
+AStar_7x7_5C_2-test_3: manhattan - penalty_enclosure.,44,1616,44,22,0.125,0.02207375
+AStar_7x7_5C_3-test_2: manhattan - penalty_enclosure.,44,19711,44,22,0.437,0
+AStar_5x5_4C_1-test_4: euclidean.,21,32,21,10,0.016,0.67478848
+AStar_5x5_4C_2-test_4: euclidean.,21,167,21,10,0.016,0
+AStar_5x5_4C_3-test_4: euclidean.,21,198,21,10,0.016,0
+AStar_5x5_4C_4-test_4: euclidean.,21,234,21,10,0.031,0
+AStar_7x7_6C_1-test_4: euclidean.,43,361,43,18,0.031,0
+AStar_7x7_5C_2-test_4: euclidean.,44,1329,44,22,0.047,0
+AStar_5x5_4C_1-test_5: euclidean - manhattan.,21,34,21,10,0,0.00231171
+AStar_5x5_4C_2-test_5: euclidean - manhattan.,21,295,21,10,0.016,0
+AStar_5x5_4C_3-test_5: euclidean - manhattan.,21,326,21,10,0.016,0
+AStar_5x5_4C_4-test_5: euclidean - manhattan.,21,402,21,10,0.016,0
+AStar_7x7_6C_1-test_5: euclidean - manhattan.,43,1437,43,18,0.032,0
+AStar_7x7_5C_2-test_5: euclidean - manhattan.,44,1950,44,22,0.047,0
+AStar_7x7_5C_4-test_2: euclidean - manhattan.,44,151,44,15,0.016,0.00673676

@@ -1,0 +1,8 @@
+path_to_goal: [['B', 'B', 'B', 'B', 'B', 'B', 'B'], ['B', 'D', 'D', 'D', 'D', 'D', 'R'], ['B', 'D', 'R', 'R', 'R', 'R', 'R'], ['B', 'R', 'R', 'G', 'C', 'C', 'C'], ['B', 'R', 'G', 'G', 'Y', 'Y', 'C'], ['B', 'R', 'R', 'R', 'R', 'Y', 'C'], ['B', 'B', 'B', 'B', 'B', 'B', 'C']]
+cost_of_path: 43
+nodes_expanded: 570
+search_depth: 43
+max_search_depth: 18
+running_time: 0.06200000
+max_ram_usage: 0.00000000
+Heuristic: manhattan.
