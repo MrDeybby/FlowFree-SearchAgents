@@ -1,0 +1,2 @@
+Algorithm-Level,cost_of_path,nodes_expanded,search_depth,max_search_depth,running_time,max_ram_usage
+DFS-BFS_5x5_4C_3-test_1,21,75,21,10,0.01600000,0.00815582
